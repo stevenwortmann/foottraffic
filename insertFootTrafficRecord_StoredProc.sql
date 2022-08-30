@@ -1,4 +1,4 @@
-CREATE PROCEDURE addFootTrafficRecord(
+CREATE PROCEDURE insertFootTrafficRecord(
   a_placekey VARCHAR(max),
   c_locationname VARCHAR(max),
   e_brands VARCHAR(max),
@@ -30,12 +30,24 @@ CREATE PROCEDURE addFootTrafficRecord(
   ar_normvisits_totalvisitors FLOAT
 )
 AS $$
+DECLARE @nidout INT;
+
 DECLARE @locidout INT;
 DECLARE @bidout INT;
-DECLARE @nidout INT;
 DECLARE @vidout INT;
 
 BEGIN
+
+  IF (SELECT COUNT(1) FROM naicsCodes WHERE naics_code=h_naicscode)=1 THEN
+      SELECT nid INTO @nidout FROM naicsCodes WHERE naics_code=h_nc;
+    ELSE
+      INSERT INTO naicsCodes(naics_code, top_category, sub_category)
+      VALUES (h_naicscode, f_topcategory, g_subcategory);
+      SELECT LAST_VALUE(nid) INTO @nidout;
+    END IF;
+
+
+-------end functional script
 
   IF (SELECT COUNT(1) FROM visitsInfo WHERE (placekey=a_pk AND date_range_start=w_ds))=1 
 	BEGIN
