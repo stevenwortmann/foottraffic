@@ -313,3 +313,7 @@
         GO
         ALTER DATABASE [Foot_Traffic] SET  READ_WRITE 
         GO
+		USE [Foot_Traffic]
+        GO
+		INSERT INTO devices VALUES ('android');
+        INSERT INTO devices VALUES ('ios');
