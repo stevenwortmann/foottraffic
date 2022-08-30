@@ -31,6 +31,7 @@ CREATE PROCEDURE insertFootTrafficRecord(
 )
 AS $$
 DECLARE @nidout INT;
+DECLARE @cbgidout INT;
 
 DECLARE @locidout INT;
 DECLARE @bidout INT;
@@ -39,12 +40,21 @@ DECLARE @vidout INT;
 BEGIN
 
   IF (SELECT COUNT(1) FROM naicsCodes WHERE naics_code=h_naicscode)=1 THEN
-      SELECT nid INTO @nidout FROM naicsCodes WHERE naics_code=h_nc;
+      SELECT nid INTO @nidout FROM naicsCodes WHERE naics_code=h_naicscode;
     ELSE
       INSERT INTO naicsCodes(naics_code, top_category, sub_category)
       VALUES (h_naicscode, f_topcategory, g_subcategory);
       SELECT LAST_VALUE(nid) INTO @nidout;
     END IF;
+
+  IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=ac_poicbg)=1 THEN
+      SELECT cbgid INTO @cbgidout FROM censusBlockGroups WHERE cbg_number=ac_poicbg;
+    ELSE
+      INSERT INTO censusBlockGroups(cbg_number)
+      VALUES (ac_poicbg);
+      SELECT LAST_VALUE(cbgid) INTO @cbgidout;
+    END IF;
+
 
 
 -------end functional script
