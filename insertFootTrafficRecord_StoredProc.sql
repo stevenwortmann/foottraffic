@@ -33,9 +33,9 @@ AS $$
 DECLARE @nidout INT;
 DECLARE @cbgidout INT;
 DECLARE @locidout INT;
+DECLARE @vidout INT;
 
 DECLARE @bidout INT;
-DECLARE @vidout INT;
 
 BEGIN
 
@@ -45,6 +45,18 @@ BEGIN
       INSERT INTO naicsCodes(naics_code, top_category, sub_category)
       VALUES (h_naicscode, f_topcategory, g_subcategory);
       SELECT LAST_VALUE(nid) INTO @nidout;
+    END IF;
+
+  IF (e_brands IS NOT NULL) THEN -- Check if cell is populated for record insertion, else skip.
+    BEGIN
+    IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=e_brands)=1 THEN
+        SELECT bid INTO bidout FROM brandsInfo WHERE brand_name=e_brands;
+      ELSE
+        INSERT INTO brandsInfo(nid, brand_name)
+        VALUES (@nidout, e_brands);
+        SELECT LAST_VALUE(bid) INTO bidout;
+    ELSE
+      SET e_brands = e_brands
     END IF;
 
   IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=ac_poicbg)=1 THEN
@@ -63,53 +75,17 @@ BEGIN
       SELECT LAST_VALUE(locid) INTO @locidout;
     END IF;
 
-
-
--------end functional script
-
-  IF (SELECT COUNT(1) FROM visitsInfo WHERE (placekey=a_pk AND date_range_start=w_ds))=1 
-	BEGIN
-      SELECT vid INTO @vidout FROM visitsInfo WHERE (placekey=a_pk AND date_range_start=w_ds)
-	 END
-   ELSE
-	BEGIN
-      INSERT INTO visitsInfo(placekey,date_range_start,date_range_end,raw_visit_counts,
-                  raw_visitor_counts,visits_by_day,visits_by_each_hour,visitor_home_cbgs,
-                  visitor_home_aggregation,visitor_daytime_cbgs,visitor_country_of_origin,
-                  distance_from_home,median_dwell,bucketed_dwell_times,related_same_day_brand,
-                  related_same_week_brand,device_type,normalized_visits_by_state_scaling,
-                  normalized_visits_by_region_naics_visits,normalized_visits_by_region_naics_visitors,
-                  normalized_visits_by_total_visits,normalized_visits_by_total_visitors)
-      VALUES (a_pk,w_ds,x_de,y_rvt,z_rvr,aa_vbd,ab_vbh,ad_vhc,ae_vha,af_vdc,ag_vco,ah_dfh,ai_md,aj_bdt,ak_rsd,
-          al_rsw,am_dt,an_nvss,ao_nvrnt,ap_nvnvr,aq_nvtvt,ar_nvtv);
-      SELECT LAST_VALUE(vid) INTO @vidout;
-	END;
-
-  IF (SELECT COUNT(1) FROM naicsCodes WHERE naics_code=h_nc)=1 THEN
-      SELECT nid INTO @nidout FROM naicsCodes WHERE naics_code=h_nc;
+  IF (SELECT COUNT(1) FROM visitsInfo WHERE (locid=@locidout AND week_begin=w_daterangestart))=1 
+    BEGIN
+        SELECT vid INTO @vidout FROM visitsInfo WHERE (locid=@locidout AND week_begin=w_daterangestart)
+    END
     ELSE
-      INSERT INTO naicsCodes(top_category,sub_category,naics_code)
-      VALUES (f_tc,g_sc,h_nc);
-      SELECT LAST_VALUE(nid) INTO @nidout;
-    END IF;
-
-  IF (SELECT COUNT(1) FROM brandsInfo WHERE safegraph_brand_ids=d_sbid)=1 THEN
-      SELECT bid INTO @bidout FROM brandsInfo WHERE safegraph_brand_ids=d_sbid;
-    ELSE
-      INSERT INTO brandsInfo(safegraph_brand_ids,brands,nid)
-      VALUES (d_sbid,e_bds,@nidout);
-      SELECT LAST_VALUE(bid) INTO @bidout;
-    END IF;
-
-  IF (SELECT COUNT(1) FROM locationInfo WHERE placekey=a_pk)=1 THEN
-      SELECT locid INTO @locidout FROM locationInfo WHERE placekey=a_pk;
-    ELSE
-      INSERT INTO locationInfo(placekey,parent_placekey,location_name,vid,nid,bid,latitude,longitude,
-        naics_code,city,region,street_address,iso_country_code,phone_number,open_hours,category_tags,
-        opened_on,closed_on,tracking_closed_since,geometry_type,poi_cbg)
-      VALUES (a_pk,b_ppk,c_lo,@vidout,@nidout,@bidout,i_lt,j_lg,k_sa,l_ci,m_rg,n_pc,
-          o_cy,p_pn,q_op,r_ct,s_oo,t_co,u_ts,v_gt,ac_cbg);
-      SELECT LAST_VALUE(locid) INTO @locidout;
-    END IF;
+        INSERT INTO visitsInfo(locid, week_begin, raw_visit_counts, raw_visitor_counts, distance_from_home, median_dwell,
+                               normalized_visits_by_state_scaling, normalized_visits_by_region_naics_visits, normalized_visits_by_region_naics_visitors,
+                               normalized_visits_by_total_visits, normalized_visits_by_total_visitors)
+        VALUES (@locidout, w_daterangestart, y_rawvisitcounts, z_rawvisitorcounts, ah_distancefromhome, ai_mediumdwell,
+                an_normvisits_statescaling, ao_normvisits_regionnaicsvisits, ap_normvisits_regionnaicsvisitors, aq_normvisits_totalvisits, ar_normvisits_totalvisitors);
+        SELECT LAST_VALUE(vid) INTO @vidout;
+      END IF;
 
 END;
