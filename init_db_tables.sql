@@ -3,6 +3,7 @@ USE [Foot_Traffic]
 DROP TABLE IF EXISTS[dbo].[brandsDay]
 DROP TABLE IF EXISTS[dbo].[brandsWeek]
 DROP TABLE IF EXISTS[dbo].[brandsInfo]
+DROP TABLE IF EXISTS[dbo].[categoriesXref]
 DROP TABLE IF EXISTS[dbo].[categories]
 DROP TABLE IF EXISTS[dbo].[deviceLog]
 DROP TABLE IF EXISTS[dbo].[devices]
@@ -63,7 +64,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[categories](
 [cid] [int] IDENTITY(1,1) NOT NULL,
-[locid] [int] NOT NULL,
 [category] [varchar](max) NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -75,6 +75,21 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[categoriesXref](
+[cxid] [int] IDENTITY(1,1) NOT NULL,
+[locid] [int] NOT NULL,
+[cid] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+[cxid] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE TABLE [dbo].[censusBlockGroups](
 [cbgid] [int] IDENTITY(1,1) NOT NULL,
 [cbg_number] [int] NOT NULL,
@@ -227,10 +242,15 @@ REFERENCES [dbo].[visitsInfo] ([vid])
 GO
 ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.vid]
 GO
-ALTER TABLE [dbo].[categories]  WITH CHECK ADD  CONSTRAINT [FK_categories.locid] FOREIGN KEY([locid])
+ALTER TABLE [dbo].[categoriesXref]  WITH CHECK ADD  CONSTRAINT [FK_categoriesXref.locid] FOREIGN KEY([locid])
 REFERENCES [dbo].[locationInfo] ([locid])
 GO
-ALTER TABLE [dbo].[categories] CHECK CONSTRAINT [FK_categories.locid]
+ALTER TABLE [dbo].[categoriesXref] CHECK CONSTRAINT [FK_categoriesXref.locid]
+GO
+ALTER TABLE [dbo].[categoriesXref]  WITH CHECK ADD  CONSTRAINT [FK_categoriesXref.cid] FOREIGN KEY([cid])
+REFERENCES [dbo].[categories] ([cid])
+GO
+ALTER TABLE [dbo].[categoriesXref] CHECK CONSTRAINT [FK_categoriesXref.cid]
 GO
 ALTER TABLE [dbo].[deviceLog]  WITH CHECK ADD  CONSTRAINT [FK_deviceLog.did] FOREIGN KEY([did])
 REFERENCES [dbo].[devices] ([did])
