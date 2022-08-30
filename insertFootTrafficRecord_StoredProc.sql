@@ -32,8 +32,8 @@ CREATE PROCEDURE insertFootTrafficRecord(
 AS $$
 DECLARE @nidout INT;
 DECLARE @cbgidout INT;
-
 DECLARE @locidout INT;
+
 DECLARE @bidout INT;
 DECLARE @vidout INT;
 
@@ -53,6 +53,14 @@ BEGIN
       INSERT INTO censusBlockGroups(cbg_number)
       VALUES (ac_poicbg);
       SELECT LAST_VALUE(cbgid) INTO @cbgidout;
+    END IF;
+
+  IF (SELECT COUNT(1) FROM locationInfo WHERE placekey=a_placekey)=1 THEN
+      SELECT locid INTO @locidout FROM locationInfo WHERE placekey=a_placekey;
+    ELSE
+      INSERT INTO locationInfo(nid, cbgid, placekey, location_name, latitude, longitude, street_address, city, region, phone_number)
+      VALUES (@nidout, @cbgidout, a_placekey, i_latitude, j_longitude, k_streetaddress, l_city, m_region, n_postalcode, p_phonenumber);
+      SELECT LAST_VALUE(locid) INTO @locidout;
     END IF;
 
 
