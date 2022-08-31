@@ -12,17 +12,23 @@ CREATE PROCEDURE insertFootTrafficRecord(
   m_region VARCHAR(max),
   n_postalcode VARCHAR(max),
   p_phonenumber VARCHAR(max),
+  r_categorytag VARCHAR(max),
   w_daterangestart VARCHAR(max),
   y_rawvisitcounts INT,
   z_rawvisitorcounts INT,
   ac_poicbg VARCHAR(max),
-  ad_visitorhomecbgs VARCHAR(max),
-  af_visitordaytimecbgsa VARCHAR(max),
+  ad_visitorhomecbg VARCHAR(max),
+  ad_visitorhomecbg_cnt INT,
+  af_visitordaytimecbg VARCHAR(max),
+  af_visitordaytimecbg_cnt INT,
   ah_distancefromhome INT,
   ai_mediumdwell FLOAT,
   ak_relatedsamedaybrand VARCHAR(max),
+  ak_relatedsamedaybrand_cnt INT,
   al_relatedsameweekbrand VARCHAR(max),
+  al_relatedsameweekbrand_cnt INT,
   am_devicetype VARCHAR(max),
+  am_devicetype_cnt INT,
   an_normvisits_statescaling FLOAT,
   ao_normvisits_regionnaicsvisits FLOAT,
   ap_normvisits_totalvisits FLOAT,
@@ -34,8 +40,6 @@ DECLARE @nidout INT;
 DECLARE @cbgidout INT;
 DECLARE @locidout INT;
 DECLARE @vidout INT;
-
-DECLARE @bidout INT;
 
 BEGIN
 
@@ -89,3 +93,26 @@ BEGIN
       END IF;
 
 END;
+
+CREATE PROCEDURE insertCategories(
+  a_placekey VARCHAR(max),
+  r_categorytag VARCHAR(max),
+)
+AS $$
+DECLARE @locidout INT;
+DECLARE @cidout INT;
+
+BEGIN
+
+  IF (SELECT COUNT(1) FROM categories WHERE (category=r_categorytag))=1 
+    BEGIN
+        SELECT cid INTO @cidout FROM categories WHERE (category=r_categorytag)
+    END
+    ELSE
+        INSERT INTO categories(category)
+        VALUES (r_categorytag)
+        SELECT LAST_VALUE(cid) INTO @cidout;
+        SELECT loccid INTO @locidout FROM locationInfo WHERE (placekey=a_placekey)
+        INSERT INTO categoriesXref(locid, cid)
+        VALUES (@locidout, @cidout);
+      END IF;
