@@ -16,7 +16,7 @@ BEGIN
         INSERT INTO categories(category)
         VALUES (r_categorytag)
         SELECT LAST_VALUE(cid) INTO @cidout;
-        SELECT loccid INTO @locidout FROM locationInfo WHERE (placekey=a_placekey)
+        SELECT locid INTO @locidout FROM locationInfo WHERE (placekey=a_placekey)
         INSERT INTO categoriesXref(locid, cid)
         VALUES (@locidout, @cidout);
       END IF;
