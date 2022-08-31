@@ -2,7 +2,6 @@ USE [Foot_Traffic]
 
 DROP TABLE IF EXISTS[dbo].[brandsDay]
 DROP TABLE IF EXISTS[dbo].[brandsWeek]
-DROP TABLE IF EXISTS[dbo].[brandsInfo]
 DROP TABLE IF EXISTS[dbo].[categoriesXref]
 DROP TABLE IF EXISTS[dbo].[categories]
 DROP TABLE IF EXISTS[dbo].[deviceLog]
@@ -12,6 +11,7 @@ DROP TABLE IF EXISTS[dbo].[workVisits]
 DROP TABLE IF EXISTS[dbo].[visitsInfo]
 DROP TABLE IF EXISTS[dbo].[locationInfo]
 DROP TABLE IF EXISTS[dbo].[censusBlockGroups]
+DROP TABLE IF EXISTS[dbo].[brandsInfo]
 DROP TABLE IF EXISTS[dbo].[naicsCodes]
 
 SET ANSI_NULLS ON
@@ -149,6 +149,7 @@ GO
 CREATE TABLE [dbo].[locationInfo](
 [locid] [int] IDENTITY(1,1) NOT NULL,
 [nid] [int] NULL,
+[bid] [int] NULL,
 [cbgid] [int] NULL,
 [placekey] [varchar](max) NULL,
 [location_name] [varchar](max) NULL,
@@ -271,6 +272,11 @@ ALTER TABLE [dbo].[homeVisits]  WITH CHECK ADD  CONSTRAINT [FK_homeVisits.vid] F
 REFERENCES [dbo].[visitsInfo] ([vid])
 GO
 ALTER TABLE [dbo].[homeVisits] CHECK CONSTRAINT [FK_homeVisits.vid]
+GO
+ALTER TABLE [dbo].[locationInfo]  WITH CHECK ADD  CONSTRAINT [FK_locationInfo.bid] FOREIGN KEY([bid])
+REFERENCES [dbo].[brandsInfo] ([bid])
+GO
+ALTER TABLE [dbo].[locationInfo] CHECK CONSTRAINT [FK_locationInfo.bid]
 GO
 ALTER TABLE [dbo].[locationInfo]  WITH CHECK ADD  CONSTRAINT [FK_locationInfo.cbgid ] FOREIGN KEY([cbgid])
 REFERENCES [dbo].[censusBlockGroups] ([cbgid])

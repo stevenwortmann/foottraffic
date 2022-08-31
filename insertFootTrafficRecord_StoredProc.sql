@@ -62,6 +62,7 @@ BEGIN
         SELECT LAST_VALUE(bid) INTO bidout;
     ELSE
       SET e_brands = e_brands
+      SELECT NULL INTO bidout;
     END IF;
 
   IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=ac_poicbg)=1 THEN
