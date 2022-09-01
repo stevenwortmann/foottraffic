@@ -193,8 +193,8 @@ CREATE TABLE [dbo].[visitsInfo](
 [distance_from_home] [int] NULL,
 [median_dwell] [float] NULL,
 [normalized_visits_by_state_scaling] [float] NOT NULL,
-[normalized_visits_by_naics_visits] [float] NOT NULL,
-[normalized_visits_by_naics_visitors] [float] NOT NULL,
+[normalized_visits_by_region_naics_visits] [float] NOT NULL,
+[normalized_visits_by_region_naics_visitors] [float] NOT NULL,
 [normalized_visits_by_total_visits] [float] NOT NULL,
 [normalized_visits_by_total_visitors] [float] NOT NULL,
 PRIMARY KEY CLUSTERED 
