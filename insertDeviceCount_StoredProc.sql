@@ -2,7 +2,7 @@ CREATE PROCEDURE insertDeviceCount( -- 'device_name' field fully populated with 
 	@a_placekey VARCHAR(max),
 	@w_daterangestart VARCHAR(max),
 	@am_devicetype VARCHAR(max),
-	@am_devicetype_cnt INT,
+	@am_devicetype_cnt INT
 )
 AS
 BEGIN
@@ -18,4 +18,5 @@ BEGIN
         INSERT INTO deviceLog(did, vid, user_count)
         VALUES (@didout, @vidout, @am_devicetype_cnt);
     END;
+END;
 END;

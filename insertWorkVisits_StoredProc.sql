@@ -2,7 +2,7 @@ CREATE PROCEDURE insertWorkVisits(
 	@a_placekey VARCHAR(max),
 	@w_daterangestart VARCHAR(max),
 	@af_visitordaytimecbg VARCHAR(max),
-	@af_visitordaytimecbg_cnt INT,
+	@af_visitordaytimecbg_cnt INT
 )
 AS
 BEGIN
@@ -18,4 +18,5 @@ BEGIN
         INSERT INTO homeVisits(vid, cbgid, visit_count)
         VALUES (@vidout, @cbgidout, @af_visitordaytimecbg_cnt);
     END;
+END;
 END;

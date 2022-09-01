@@ -12,7 +12,7 @@ BEGIN
 	IF (SELECT COUNT(1) FROM categories WHERE (category=@r_categorytag))=1 
 		BEGIN
 			SELECT cid INTO cidout FROM categories WHERE (category=@r_categorytag)
-		END
+		END;
 	ELSE
 		BEGIN
 			INSERT INTO categories(category)
@@ -21,5 +21,6 @@ BEGIN
 			SELECT @locidout = LAST_VALUE(locid) OVER (ORDER BY locid) FROM locationInfo;
 			INSERT INTO categoriesXref(locid, cid)
 			VALUES (@locidout, @cidout);
-		END
+		END;
+END;
 END;

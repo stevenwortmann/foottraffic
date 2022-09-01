@@ -2,7 +2,7 @@ CREATE PROCEDURE insertBrandsDay(
 	@a_placekey VARCHAR(max),
 	@w_daterangestart VARCHAR(max),
 	@ak_relatedsamedaybrand VARCHAR(max),
-	@ak_relatedsamedaybrand_cnt INT,
+	@ak_relatedsamedaybrand_cnt INT
 )
 AS
 BEGIN
@@ -18,4 +18,5 @@ BEGIN
         INSERT INTO brandsDay(vid, bid, visit_count)
         VALUES (@vidout, @bidout, @ak_relatedsamedaybrand_cnt);
     END;
+END;
 END;
