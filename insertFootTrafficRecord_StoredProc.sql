@@ -36,54 +36,54 @@ DECLARE @vidout INT;
 
     IF (SELECT COUNT(1) FROM naicsCodes WHERE naics_code=@h_naicscode)=1 
       BEGIN
-        SELECT nid INTO nidout FROM naicsCodes WHERE naics_code=@h_naicscode;
+        SET @nidout=(SELECT nid FROM naicsCodes WHERE naics_code=@h_naicscode); --error: can't get past if there is same 
       END;
     ELSE
       BEGIN
         INSERT INTO naicsCodes(naics_code, top_category, sub_category)
         VALUES (@h_naicscode, @f_topcategory, @g_subcategory);
-        SELECT @nidout = LAST_VALUE(nid) OVER (ORDER BY nid) FROM naicsCodes;
+        SET @nidout=(SELECT LAST_VALUE(nid) OVER (ORDER BY nid) FROM naicsCodes);
       END;
 
 
     IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1 --filter out nulls in python
       BEGIN
-        SELECT bid INTO bidout FROM brandsInfo WHERE brand_name=@e_brands;
+        SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@e_brands);
       END;
     ELSE
       BEGIN
         INSERT INTO brandsInfo(nid, brand_name)
         VALUES (@nidout, @e_brands);
-        SELECT @bidout = LAST_VALUE(bid) OVER (ORDER BY bid) FROM brandsInfo;
+        SET @bidout=(SELECT LAST_VALUE(bid) OVER (ORDER BY bid) FROM brandsInfo);
       END;
 
     IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ac_poicbg)=1
       BEGIN
-        SELECT cbgid INTO cbgidout FROM censusBlockGroups WHERE cbg_number=@ac_poicbg;
+		SET @cbgidout=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ac_poicbg);
       END;
 
     ELSE
       BEGIN
         INSERT INTO censusBlockGroups(cbg_number)
         VALUES (@ac_poicbg);
-        SELECT @cbgidout = LAST_VALUE(cbgid) OVER (ORDER BY cbgid) FROM censusBlockGroups;
+		SET @cbgidout=(SELECT LAST_VALUE(cbgid) OVER (ORDER BY cbgid) FROM censusBlockGroups);
       END;
 
     IF (SELECT COUNT(1) FROM locationInfo WHERE placekey=@a_placekey)=1
       BEGIN
-        SELECT locid INTO locidout FROM locationInfo WHERE placekey=@a_placekey;
+		SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey);
       END;
 
     ELSE
       BEGIN
         INSERT INTO locationInfo(nid, bid, cbgid, placekey, location_name, brand_name, latitude, longitude, street_address, city, region, postal_code, phone_number)
         VALUES (@nidout, @bidout, @cbgidout, @a_placekey, @c_locationname, @e_brands, @i_latitude, @j_longitude, @k_streetaddress, @l_city, @m_region, @n_postalcode, @p_phonenumber);
-        SELECT @locidout = LAST_VALUE(locid) OVER (ORDER BY locid) FROM locationInfo;
+		SET @locidout=(SELECT LAST_VALUE(locid) OVER (ORDER BY locid) FROM locationInfo);
       END;
 
     IF (SELECT COUNT(1) FROM visitsInfo WHERE (locid=@locidout AND week_begin=@w_daterangestart))=1 
       BEGIN
-        SELECT vid INTO vidout FROM visitsInfo WHERE (locid=@locidout AND week_begin=@w_daterangestart)
+		SET @vidout=(SELECT vid FROM visitsInfo WHERE (locid=@locidout AND week_begin=@w_daterangestart));
       END;
 
     ELSE
@@ -92,7 +92,7 @@ DECLARE @vidout INT;
           normalized_visits_by_region_naics_visits, normalized_visits_by_region_naics_visitors, normalized_visits_by_total_visits, normalized_visits_by_total_visitors)
         VALUES (@locidout, @w_daterangestart, @y_rawvisitcounts, @z_rawvisitorcounts, @ah_distancefromhome, @ai_mediumdwell, @an_normvisits_statescaling,
           @ao_normvisits_regionnaicsvisits, @ap_normvisits_regionnaicsvisitors, @aq_normvisits_totalvisits, @ar_normvisits_totalvisitors);
-        SELECT @vidout = LAST_VALUE(vid) OVER (ORDER BY vid) FROM visitsInfo;
+		SET @vidout=(SELECT LAST_VALUE(vid) OVER (ORDER BY vid) FROM visitsInfo);
       END;
     END;
 END;
