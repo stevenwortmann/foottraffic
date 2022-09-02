@@ -1,17 +1,17 @@
-CREATE PROCEDURE insertFootTrafficRecord(
+ALTER PROCEDURE insertFootTrafficRecord(
 	@a_placekey VARCHAR(max),
 	@c_locationname VARCHAR(max),
 	@e_brands VARCHAR(max),
 	@f_topcategory VARCHAR(max),
 	@g_subcategory VARCHAR(max),
-	@h_naicscode VARCHAR(max),
+	@h_naicscode INT,
 	@i_latitude FLOAT,
 	@j_longitude FLOAT,
 	@k_streetaddress VARCHAR(max),
 	@l_city VARCHAR(max),
 	@m_region VARCHAR(max),
-	@n_postalcode VARCHAR(max),
-	@p_phonenumber VARCHAR(max),
+	@n_postalcode INT,
+	@p_phonenumber BIGINT,
 	@w_daterangestart VARCHAR(max),
 	@y_rawvisitcounts INT,
 	@z_rawvisitorcounts INT,
@@ -46,11 +46,11 @@ DECLARE @vidout INT;
       END;
 
 
-      IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1 --filter out nulls in python
+    IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1 --filter out nulls in python
       BEGIN
         SELECT bid INTO bidout FROM brandsInfo WHERE brand_name=@e_brands;
       END;
-      ELSE
+    ELSE
       BEGIN
         INSERT INTO brandsInfo(nid, brand_name)
         VALUES (@nidout, @e_brands);
@@ -76,8 +76,8 @@ DECLARE @vidout INT;
 
     ELSE
       BEGIN
-        INSERT INTO locationInfo(nid, bid, cbgid, placekey, location_name, latitude, longitude, street_address, city, region, phone_number)
-        VALUES (@nidout, @bidout, @cbgidout, @a_placekey, @i_latitude, @j_longitude, @k_streetaddress, @l_city, @m_region, @n_postalcode, @p_phonenumber);
+        INSERT INTO locationInfo(nid, bid, cbgid, placekey, location_name, brand_name, latitude, longitude, street_address, city, region, postal_code, phone_number)
+        VALUES (@nidout, @bidout, @cbgidout, @a_placekey, @c_locationname, @e_brands, @i_latitude, @j_longitude, @k_streetaddress, @l_city, @m_region, @n_postalcode, @p_phonenumber);
         SELECT @locidout = LAST_VALUE(locid) OVER (ORDER BY locid) FROM locationInfo;
       END;
 

@@ -92,7 +92,7 @@ GO
 
 CREATE TABLE [dbo].[censusBlockGroups](
 [cbgid] [int] IDENTITY(1,1) NOT NULL,
-[cbg_number] [int] NOT NULL,
+[cbg_number] [bigint] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 [cbgid] ASC
@@ -153,12 +153,14 @@ CREATE TABLE [dbo].[locationInfo](
 [cbgid] [int] NULL,
 [placekey] [varchar](max) NULL,
 [location_name] [varchar](max) NULL,
+[brand_name] [varchar](max) NULL,
 [latitude] [float] NULL,
 [longitude] [float] NULL,
 [street_address] [varchar](max) NULL,
 [city] [varchar](max) NULL,
 [region] [varchar](max) NULL,
-[phone_number] [varchar](max) NULL,
+[postal_code] [int] NULL,
+[phone_number] [bigint] NULL,
 PRIMARY KEY CLUSTERED 
 (
 [locid] ASC
