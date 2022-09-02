@@ -54,7 +54,7 @@ DECLARE @vidout INT;
       BEGIN
         INSERT INTO brandsInfo(nid, brand_name)
         VALUES (@nidout, @e_brands);
-        SET @bidout=(SELECT LAST_VALUE(bid) OVER (ORDER BY bid) FROM brandsInfo);
+        SET @bidout=(SELECT TOP 1 vid FROM visitsInfo ORDER BY vid DESC);
       END;
 
     IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ac_poicbg)=1
@@ -66,33 +66,31 @@ DECLARE @vidout INT;
       BEGIN
         INSERT INTO censusBlockGroups(cbg_number)
         VALUES (@ac_poicbg);
-		SET @cbgidout=(SELECT LAST_VALUE(cbgid) OVER (ORDER BY cbgid) FROM censusBlockGroups);
+		SET @cbgidout=(SELECT TOP 1 vid FROM visitsInfo ORDER BY vid DESC);
       END;
 
     IF (SELECT COUNT(1) FROM locationInfo WHERE placekey=@a_placekey)=1
       BEGIN
 		SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey);
       END;
-
     ELSE
       BEGIN
         INSERT INTO locationInfo(nid, bid, cbgid, placekey, location_name, brand_name, latitude, longitude, street_address, city, region, postal_code, phone_number)
         VALUES (@nidout, @bidout, @cbgidout, @a_placekey, @c_locationname, @e_brands, @i_latitude, @j_longitude, @k_streetaddress, @l_city, @m_region, @n_postalcode, @p_phonenumber);
-		SET @locidout=(SELECT LAST_VALUE(locid) OVER (ORDER BY locid) FROM locationInfo);
+		SET @locidout=(SELECT TOP 1 locid FROM locationInfo ORDER BY locid DESC);
       END;
 
     IF (SELECT COUNT(1) FROM visitsInfo WHERE (locid=@locidout AND week_begin=@w_daterangestart))=1 
       BEGIN
 		SET @vidout=(SELECT vid FROM visitsInfo WHERE (locid=@locidout AND week_begin=@w_daterangestart));
       END;
-
     ELSE
       BEGIN
         INSERT INTO visitsInfo(locid, week_begin, raw_visit_counts, raw_visitor_counts, distance_from_home, median_dwell, normalized_visits_by_state_scaling,
           normalized_visits_by_region_naics_visits, normalized_visits_by_region_naics_visitors, normalized_visits_by_total_visits, normalized_visits_by_total_visitors)
         VALUES (@locidout, @w_daterangestart, @y_rawvisitcounts, @z_rawvisitorcounts, @ah_distancefromhome, @ai_mediumdwell, @an_normvisits_statescaling,
           @ao_normvisits_regionnaicsvisits, @ap_normvisits_regionnaicsvisitors, @aq_normvisits_totalvisits, @ar_normvisits_totalvisitors);
-		SET @vidout=(SELECT LAST_VALUE(vid) OVER (ORDER BY vid) FROM visitsInfo);
+		    SET @vidout=(SELECT TOP 1 vid FROM visitsInfo ORDER BY vid DESC);
       END;
     END;
 END;
