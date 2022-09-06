@@ -1,4 +1,4 @@
-CREATE PROCEDURE insertCategories(
+ALTER PROCEDURE insertCategories(
 	@a_placekey VARCHAR(max),
 	@r_categorytag VARCHAR(max)
 )
@@ -17,8 +17,8 @@ BEGIN
 		BEGIN
 			INSERT INTO categories(category)
 			VALUES (@r_categorytag)
-			SELECT @cidout = LAST_VALUE(cid) OVER (ORDER BY cid) FROM categories;
-			SELECT @locidout = LAST_VALUE(locid) OVER (ORDER BY locid) FROM locationInfo;
+			SET @cidout=(SELECT TOP 1 cid FROM categories ORDER BY cid DESC);
+			SET @locidout=(SELECT TOP 1 locid FROM locationInfo ORDER BY locid DESC);
 			INSERT INTO categoriesXref(locid, cid)
 			VALUES (@locidout, @cidout);
 		END;
