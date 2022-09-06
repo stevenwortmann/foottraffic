@@ -15,7 +15,7 @@ ALTER PROCEDURE insertFootTrafficRecord(
 	@w_daterangestart VARCHAR(max),
 	@y_rawvisitcounts INT,
 	@z_rawvisitorcounts INT,
-	@ac_poicbg VARCHAR(max),
+	@ac_poicbg BIGINT,
 	@ah_distancefromhome INT,
 	@ai_mediumdwell FLOAT,
 	@an_normvisits_statescaling FLOAT,
@@ -42,7 +42,7 @@ DECLARE @vidout INT;
       BEGIN
         INSERT INTO naicsCodes(naics_code, top_category, sub_category)
         VALUES (@h_naicscode, @f_topcategory, @g_subcategory);
-        SET @nidout=(SELECT LAST_VALUE(nid) OVER (ORDER BY nid) FROM naicsCodes);
+        SET @nidout=(SELECT TOP 1 nid FROM naicsCodes ORDER BY nid DESC);
       END;
 
 
@@ -54,7 +54,7 @@ DECLARE @vidout INT;
       BEGIN
         INSERT INTO brandsInfo(nid, brand_name)
         VALUES (@nidout, @e_brands);
-        SET @bidout=(SELECT TOP 1 vid FROM visitsInfo ORDER BY vid DESC);
+        SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
       END;
 
     IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ac_poicbg)=1
@@ -66,7 +66,7 @@ DECLARE @vidout INT;
       BEGIN
         INSERT INTO censusBlockGroups(cbg_number)
         VALUES (@ac_poicbg);
-		SET @cbgidout=(SELECT TOP 1 vid FROM visitsInfo ORDER BY vid DESC);
+		SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
       END;
 
     IF (SELECT COUNT(1) FROM locationInfo WHERE placekey=@a_placekey)=1
