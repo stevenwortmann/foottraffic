@@ -40,49 +40,55 @@ DECLARE @vidout INT;
       END;
     ELSE
       BEGIN
-        INSERT INTO naicsCodes(naics_code, top_category, sub_category)
-        VALUES (@h_naicscode, @f_topcategory, @g_subcategory);
-        SET @nidout=(SELECT TOP 1 nid FROM naicsCodes ORDER BY nid DESC);
+		INSERT INTO naicsCodes(naics_code, top_category, sub_category)
+		VALUES (@h_naicscode, @f_topcategory, @g_subcategory);
+		SET @nidout=(SELECT TOP 1 nid FROM naicsCodes ORDER BY nid DESC);
       END;
 
-
-    IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1 --filter out nulls in python
-      BEGIN
-        SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@e_brands);
-      END;
-    ELSE
-      BEGIN
-        INSERT INTO brandsInfo(nid, brand_name)
-        VALUES (@nidout, @e_brands);
-        SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
-      END;
+	IF @e_brands IS NOT NULL
+		BEGIN
+			IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1 --filter out nulls in python
+				BEGIN
+				  SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@e_brands);
+        END;
+			ELSE
+				BEGIN
+          INSERT INTO brandsInfo(nid, brand_name)
+          VALUES (@nidout, @e_brands);
+          SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
+        END;
+		END;
+	ELSE
+		BEGIN
+		  SET @bidout = NULL;
+		END;
 
     IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ac_poicbg)=1
       BEGIN
-		SET @cbgidout=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ac_poicbg);
+		    SET @cbgidout=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ac_poicbg);
       END;
 
     ELSE
       BEGIN
         INSERT INTO censusBlockGroups(cbg_number)
         VALUES (@ac_poicbg);
-		SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
+		    SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
       END;
 
     IF (SELECT COUNT(1) FROM locationInfo WHERE placekey=@a_placekey)=1
       BEGIN
-		SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey);
+		    SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey);
       END;
     ELSE
       BEGIN
         INSERT INTO locationInfo(nid, bid, cbgid, placekey, location_name, brand_name, latitude, longitude, street_address, city, region, postal_code, phone_number)
         VALUES (@nidout, @bidout, @cbgidout, @a_placekey, @c_locationname, @e_brands, @i_latitude, @j_longitude, @k_streetaddress, @l_city, @m_region, @n_postalcode, @p_phonenumber);
-		SET @locidout=(SELECT TOP 1 locid FROM locationInfo ORDER BY locid DESC);
+		    SET @locidout=(SELECT TOP 1 locid FROM locationInfo ORDER BY locid DESC);
       END;
 
     IF (SELECT COUNT(1) FROM visitsInfo WHERE (locid=@locidout AND week_begin=@w_daterangestart))=1 
       BEGIN
-		SET @vidout=(SELECT vid FROM visitsInfo WHERE (locid=@locidout AND week_begin=@w_daterangestart));
+		    SET @vidout=(SELECT vid FROM visitsInfo WHERE (locid=@locidout AND week_begin=@w_daterangestart));
       END;
     ELSE
       BEGIN
