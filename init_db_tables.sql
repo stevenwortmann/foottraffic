@@ -153,7 +153,6 @@ CREATE TABLE [dbo].[locationInfo](
 [cbgid] [int] NULL,
 [placekey] [varchar](max) NULL,
 [location_name] [varchar](max) NULL,
-[brand_name] [varchar](max) NULL,
 [latitude] [float] NULL,
 [longitude] [float] NULL,
 [street_address] [varchar](max) NULL,
