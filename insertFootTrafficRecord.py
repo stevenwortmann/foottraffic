@@ -601,15 +601,42 @@ def initialize_database_stored_procs():
     cur.close()
     conn.close
 
-sql = 'exec dbo.insertFootTrafficRecord(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+sql='''EXECUTE [insertFootTrafficRecord] 
+   @a_placekey=?
+  ,@c_locationname=?
+  ,@e_brands=?
+  ,@f_topcategory=?
+  ,@g_subcategory=?
+  ,@h_naicscode=?
+  ,@i_latitude=?
+  ,@j_longitude=?
+  ,@k_streetaddress=?
+  ,@l_city=?
+  ,@m_region=?
+  ,@n_postalcode=?
+  ,@p_phonenumber=?
+  ,@w_daterangestart=?
+  ,@y_rawvisitcounts=?
+  ,@z_rawvisitorcounts=?
+  ,@ac_poicbg=?
+  ,@ah_distancefromhome=?
+  ,@ai_mediumdwell=?
+  ,@an_normvisits_statescaling=?
+  ,@ao_normvisits_regionnaicsvisits=?
+  ,@ap_normvisits_regionnaicsvisitors=?
+  ,@aq_normvisits_totalvisits=?
+  ,@ar_normvisits_totalvisitors=?
+GO
 
-for index,row in file.iterrows():
-    values = (row['placekey'], row['location_name'], row['brands'], row['top_category'], row['sub_category'], row['naics_code'],
-          row['latitude'], row['longitude'], row['street_address'], row['city'], row['region'], row['postal_code'],
-          row['phone_number'], row['date_range_start'], row['raw_visit_counts'], row['raw_visitor_counts'],
-          row['poi_cbg'], row['distance_from_home'], row['median_dwell'], row['normalized_visits_by_state_scaling'],
-          row['normalized_visits_by_region_naics_visits'], row['normalized_visits_by_region_naics_visitors'], 
-          row['normalized_visits_by_total_visits'], row['normalized_visits_by_total_visitors'] )
-    cur.execute(sql, values)
-    print(str(row['location_name'])[:20]+", "+str(row['street_address'])+", "+
-          str(row['city'])+", "+str(row['region'])+" "+str(row['postal_code']) )
+'''
+
+for row in file.itertuples():
+    values = (row.placekey, row.location_name, row.brands, row.top_category, row.sub_category, int(row.naics_code),
+              float(row.latitude), float(row.longitude), row.street_address, row.city, row.region,
+              int(row.postal_code), int(row.phone_number), row.date_range_start, int(row.raw_visit_counts), int(row.raw_visitor_counts),
+              int(row.poi_cbg), int(row.distance_from_home), float(row.median_dwell), float(row.normalized_visits_by_state_scaling),
+              float(row.normalized_visits_by_region_naics_visits),float(row.normalized_visits_by_region_naics_visitors),
+              float(row.normalized_visits_by_total_visits),float(row.normalized_visits_by_total_visitors) )
+    cur.execute(sql,values)
+    print(row.location_name,' - done')
+    cur.commit()
