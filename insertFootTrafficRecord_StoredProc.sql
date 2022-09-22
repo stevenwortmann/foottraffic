@@ -45,22 +45,15 @@ DECLARE @vidout INT;
 		SET @nidout=(SELECT TOP 1 nid FROM naicsCodes ORDER BY nid DESC);
       END;
 
-	IF @e_brands IS NOT NULL
+	IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1
 		BEGIN
-			IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1 --filter out nulls in python
-				BEGIN
-				  SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@e_brands);
-        END;
-			ELSE
-				BEGIN
-          INSERT INTO brandsInfo(nid, brand_name)
-          VALUES (@nidout, @e_brands);
-          SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
-        END;
+			SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@e_brands);
 		END;
 	ELSE
 		BEGIN
-		  SET @bidout = NULL;
+			INSERT INTO brandsInfo(nid, brand_name)
+			VALUES (@nidout, @e_brands);
+			SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
 		END;
 
     IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ac_poicbg)=1

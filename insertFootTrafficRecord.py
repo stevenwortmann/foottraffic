@@ -601,7 +601,7 @@ def initialize_database_stored_procs():
     cur.close()
     conn.close
 
-sql='''EXECUTE [insertFootTrafficRecord] 
+sql='''EXECUTE [insertFootTrafficRecord]
    @a_placekey=?
   ,@c_locationname=?
   ,@e_brands=?
@@ -626,17 +626,17 @@ sql='''EXECUTE [insertFootTrafficRecord]
   ,@ap_normvisits_regionnaicsvisitors=?
   ,@aq_normvisits_totalvisits=?
   ,@ar_normvisits_totalvisitors=?
-GO
 
 '''
 
 for row in file.itertuples():
     values = (row.placekey, row.location_name, row.brands, row.top_category, row.sub_category, int(row.naics_code),
-              float(row.latitude), float(row.longitude), row.street_address, row.city, row.region,
+              row.latitude, row.longitude, row.street_address, row.city, row.region,
               int(row.postal_code), int(row.phone_number), row.date_range_start, int(row.raw_visit_counts), int(row.raw_visitor_counts),
-              int(row.poi_cbg), int(row.distance_from_home), float(row.median_dwell), float(row.normalized_visits_by_state_scaling),
-              float(row.normalized_visits_by_region_naics_visits),float(row.normalized_visits_by_region_naics_visitors),
-              float(row.normalized_visits_by_total_visits),float(row.normalized_visits_by_total_visitors) )
+              int(row.poi_cbg), int(row.distance_from_home), row.median_dwell, row.normalized_visits_by_state_scaling,
+              row.normalized_visits_by_region_naics_visits,row.normalized_visits_by_region_naics_visitors,
+              row.normalized_visits_by_total_visits,row.normalized_visits_by_total_visitors )
     cur.execute(sql,values)
-    print(row.location_name,' - done')
+    print(row.location_name[:20]+', '+row.street_address+', '+row.city+', '+row.region+' '+str(row.postal_code)+'... '+
+         row.date_range_start+": "+str(int(row.normalized_visits_by_state_scaling))+' visitors')
     cur.commit()
