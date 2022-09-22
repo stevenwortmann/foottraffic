@@ -494,8 +494,7 @@ def initialize_database_stored_procs():
         SET @nidout=(SELECT TOP 1 nid FROM naicsCodes ORDER BY nid DESC);
         END;
 
-
-        IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1 --filter out nulls in python
+        IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1
         BEGIN
         SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@e_brands);
         END;
@@ -524,8 +523,8 @@ def initialize_database_stored_procs():
         END;
         ELSE
         BEGIN
-        INSERT INTO locationInfo(nid, bid, cbgid, placekey, location_name, brand_name, latitude, longitude, street_address, city, region, postal_code, phone_number)
-        VALUES (@nidout, @bidout, @cbgidout, @a_placekey, @c_locationname, @e_brands, @i_latitude, @j_longitude, @k_streetaddress, @l_city, @m_region, @n_postalcode, @p_phonenumber);
+        INSERT INTO locationInfo(nid, bid, cbgid, placekey, location_name, latitude, longitude, street_address, city, region, postal_code, phone_number)
+        VALUES (@nidout, @bidout, @cbgidout, @a_placekey, @c_locationname, @i_latitude, @j_longitude, @k_streetaddress, @l_city, @m_region, @n_postalcode, @p_phonenumber);
         SET @locidout=(SELECT TOP 1 locid FROM locationInfo ORDER BY locid DESC);
         END;
 
@@ -556,15 +555,29 @@ def initialize_database_stored_procs():
         BEGIN
         DECLARE @vidout INT;
         DECLARE @cbgidout INT;
+        DECLARE @locidout INT;
 
         BEGIN
+
+        SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey) 
+
+        IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg)=1
+        BEGIN
+            SET @cbgidout=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg);
+        END;
+
+        ELSE
+        BEGIN
+            INSERT INTO censusBlockGroups(cbg_number)
+            VALUES (@ad_visitorhomecbg);
+            SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
+        END;
 
         IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
         BEGIN
-        SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
-            SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups  WHERE (cbg_number=@ad_visitorhomecbg) ORDER BY cbgid DESC);
-        INSERT INTO homeVisits(vid, cbgid, visit_count)
-        VALUES (@vidout, @cbgidout, @ad_visitorhomecbg_cnt);
+            SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
+            INSERT INTO homeVisits(locid, vid, cbgid, visit_count)
+            VALUES (@locidout, @vidout, @cbgidout, @ad_visitorhomecbg_cnt);
         END;
         END;
         END;
@@ -601,7 +614,7 @@ def initialize_database_stored_procs():
     cur.close()
     conn.close
 
-sql='''EXECUTE [insertFootTrafficRecord]
+sql_insertFootTrafficRecord='''EXECUTE [insertFootTrafficRecord]
    @a_placekey=?
   ,@c_locationname=?
   ,@e_brands=?
@@ -629,14 +642,32 @@ sql='''EXECUTE [insertFootTrafficRecord]
 
 '''
 
+sql_insertHomeVisits='''EXECUTE [insertHomeVisits] 
+   @a_placekey=?
+  ,@w_daterangestart=?
+  ,@ad_visitorhomecbg=?
+  ,@ad_visitorhomecbg_cnt=?
+
+'''
+
+
 for row in file.itertuples():
-    values = (row.placekey, row.location_name, row.brands, row.top_category, row.sub_category, int(row.naics_code),
-              row.latitude, row.longitude, row.street_address, row.city, row.region,
-              int(row.postal_code), int(row.phone_number), row.date_range_start, int(row.raw_visit_counts), int(row.raw_visitor_counts),
-              int(row.poi_cbg), int(row.distance_from_home), row.median_dwell, row.normalized_visits_by_state_scaling,
-              row.normalized_visits_by_region_naics_visits,row.normalized_visits_by_region_naics_visitors,
-              row.normalized_visits_by_total_visits,row.normalized_visits_by_total_visitors )
-    cur.execute(sql,values)
+    values_insertFootTrafficRecord = (row.placekey, row.location_name, row.brands, row.top_category, row.sub_category,
+                                      int(row.naics_code), row.latitude, row.longitude, row.street_address, row.city,
+                                      row.region, int(row.postal_code), int(row.phone_number), row.date_range_start,
+                                      int(row.raw_visit_counts), int(row.raw_visitor_counts), int(row.poi_cbg),
+                                      int(row.distance_from_home), row.median_dwell, row.normalized_visits_by_state_scaling,
+                                      row.normalized_visits_by_region_naics_visits, row.normalized_visits_by_region_naics_visitors,
+                                      row.normalized_visits_by_total_visits,row.normalized_visits_by_total_visitors )
+    cur.execute(sql_insertFootTrafficRecord, values_insertFootTrafficRecord)
+    cur.commit()
     print(row.location_name[:20]+', '+row.street_address+', '+row.city+', '+row.region+' '+str(row.postal_code)+'... '+
          row.date_range_start+": "+str(int(row.normalized_visits_by_state_scaling))+' visitors')
-    cur.commit()
+
+    for x in row.visitor_home_cbgs.split(','):
+        if x!= "{}":
+            x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+            values_insertHomeVisits = (row.placekey, row.date_range_start, int(x[0]), int(x[1]))
+            cur.execute(sql_insertHomeVisits, values_insertHomeVisits)
+            cur.commit()
+            print(row.placekey, row.date_range_start, int(x[0]), int(x[1]))
