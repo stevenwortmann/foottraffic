@@ -8,8 +8,11 @@ AS
 BEGIN
 DECLARE @vidout INT;
 DECLARE @cbgidout INT;
+DECLARE @locidout INT;
 
 BEGIN
+
+  SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey) 
 
   IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg)=1
     BEGIN
@@ -26,8 +29,8 @@ BEGIN
   IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
     BEGIN
       SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
-        INSERT INTO homeVisits(vid, cbgid, visit_count)
-        VALUES (@vidout, @cbgidout, @ad_visitorhomecbg_cnt);
+        INSERT INTO homeVisits(locid, vid, cbgid, visit_count)
+        VALUES (@locidout, @vidout, @cbgidout, @ad_visitorhomecbg_cnt);
     END;
 END;
 END;
