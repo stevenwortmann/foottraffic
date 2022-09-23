@@ -648,6 +648,13 @@ sql_insertHomeVisits='''EXECUTE [insertHomeVisits]
   ,@ad_visitorhomecbg_cnt=?
 '''
 
+sql_insertWorkVisits='''EXECUTE [insertWorkVisits] 
+   @a_placekey=?
+  ,@w_daterangestart=?
+  ,@af_visitordaytimecbg=?
+  ,@af_visitordaytimecbg_cnt=?
+'''
+
 
 for row in file.itertuples():
     values_insertFootTrafficRecord = (row.placekey, row.location_name, row.brands, row.top_category, row.sub_category,
@@ -660,7 +667,7 @@ for row in file.itertuples():
     cur.execute(sql_insertFootTrafficRecord, values_insertFootTrafficRecord)
     cur.commit()
     print(row.location_name[:20]+', '+row.street_address+', '+row.city+', '+row.region+' '+str(row.postal_code)+'... '+
-         row.date_range_start+": "+str(int(row.normalized_visits_by_state_scaling))+' visitors')
+         row.date_range_start+": "+str(int(row.normalized_visits_by_state_scaling))+' total visitors...')
 
     for x in row.visitor_home_cbgs.split(','):
         if x!= "{}":
@@ -668,4 +675,12 @@ for row in file.itertuples():
             values_insertHomeVisits = (row.placekey, row.date_range_start, int(x[0]), int(x[1]))
             cur.execute(sql_insertHomeVisits, values_insertHomeVisits)
             cur.commit()
-            print(row.placekey, row.date_range_start, int(x[0]), int(x[1]))
+            print(row.date_range_start+': ' +"Home CBG "+str(x[0])+" - "+str(x[1])+" visitors...")
+    
+    for x in row.visitor_daytime_cbgs.split(','):
+        if x!= "{}":
+            x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+            values_insertWorkVisits = (row.placekey, row.date_range_start, int(x[0]), int(x[1]))
+            cur.execute(sql_insertWorkVisits, values_insertWorkVisits)
+            cur.commit()
+            print(row.date_range_start+': ' +"Work CBG "+str(x[0])+" - "+str(x[1])+" visitors...")
