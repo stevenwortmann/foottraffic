@@ -639,7 +639,6 @@ sql_insertFootTrafficRecord='''EXECUTE [insertFootTrafficRecord]
   ,@ap_normvisits_regionnaicsvisitors=?
   ,@aq_normvisits_totalvisits=?
   ,@ar_normvisits_totalvisitors=?
-
 '''
 
 sql_insertHomeVisits='''EXECUTE [insertHomeVisits] 
@@ -647,7 +646,6 @@ sql_insertHomeVisits='''EXECUTE [insertHomeVisits]
   ,@w_daterangestart=?
   ,@ad_visitorhomecbg=?
   ,@ad_visitorhomecbg_cnt=?
-
 '''
 
 
