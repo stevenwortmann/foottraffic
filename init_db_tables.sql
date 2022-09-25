@@ -36,7 +36,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[brandsInfo](
 	[bid] [int] IDENTITY(1,1) NOT NULL,
-	[nid] [int] NOT NULL,
+	[nid] [int] NULL,
 	[brand_name] [varchar](max) NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
