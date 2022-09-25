@@ -11,12 +11,23 @@ DECLARE @bidout INT;
 
 BEGIN
 
-  IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
-    BEGIN
- 		SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
- 		SET @bidout = (SELECT TOP 1 bid FROM brandsInfo WHERE (brand_name=@al_relatedsameweekbrand) ORDER BY bid DESC);
-        INSERT INTO brandsWeek(vid, bid, visit_count)
-        VALUES (@vidout, @bidout, @al_relatedsameweekbrand_cnt);
-    END;
+	IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@al_relatedsameweekbrand)=1
+		BEGIN
+			SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@al_relatedsameweekbrand);
+		END;
+	ELSE
+		BEGIN
+			INSERT INTO brandsInfo(brand_name)
+			VALUES (@al_relatedsameweekbrand);
+			SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
+		END;
+
+
+	IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
+	BEGIN
+		SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
+		INSERT INTO brandsWeek(vid, bid, visit_count)
+		VALUES (@vidout, @bidout, @al_relatedsameweekbrand_cnt);
+	END;
 END;
 END;
