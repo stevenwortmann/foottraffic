@@ -662,6 +662,13 @@ sql_insertBrandsDay='''EXECUTE [insertBrandsDay]
   ,@ak_relatedsamedaybrand_cnt=?
 '''
 
+sql_insertBrandsWeek='''EXECUTE [insertBrandsWeek] 
+   @a_placekey=?
+  ,@w_daterangestart=?
+  ,@al_relatedsameweekbrand=?
+  ,@al_relatedsameweekbrand_cnt=?
+'''
+
 for row in file.itertuples():
     values_insertFootTrafficRecord = (row.placekey, row.location_name, row.brands, row.top_category, row.sub_category,
                                       int(row.naics_code), row.latitude, row.longitude, row.street_address, row.city,
@@ -691,11 +698,18 @@ for row in file.itertuples():
             cur.commit()
             print(row.date_range_start+': ' +"Work CBG "+str(x[0])+" - "+str(x[1])+" visitors...")
             
-    
     for x in row.related_same_day_brand.split(','):
         if x!= "{}":
             x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
             values_insertBrandsDay = (row.placekey, row.date_range_start, x[0], int(x[1]))
             cur.execute(sql_insertBrandsDay, values_insertBrandsDay)
+            cur.commit()
+            print(x)
+            
+    for x in row.related_same_week_brand.split(','):
+        if x!= "{}":
+            x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+            values_insertBrandsWeek = (row.placekey, row.date_range_start, x[0], int(x[1]))
+            cur.execute(sql_insertBrandsWeek, values_insertBrandsWeek)
             cur.commit()
             print(x)
