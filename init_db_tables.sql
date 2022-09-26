@@ -22,6 +22,7 @@ CREATE TABLE [dbo].[brandsDay](
 	[bdid] [int] IDENTITY(1,1) NOT NULL,
 	[bid] [int] NOT NULL,
 	[vid] [int] NOT NULL,
+    [locid] [int] NOT NULL,
 	[visit_count] [int] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -53,6 +54,7 @@ CREATE TABLE [dbo].[brandsWeek](
 	[bwid] [int] IDENTITY(1,1) NOT NULL,
 	[bid] [int] NOT NULL,
 	[vid] [int] NOT NULL,
+    [locid] [int] NOT NULL,
 	[visit_count] [int] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -242,6 +244,11 @@ REFERENCES [dbo].[visitsInfo] ([vid])
 GO
 ALTER TABLE [dbo].[brandsDay] CHECK CONSTRAINT [FK_brandsDay.vid]
 GO
+ALTER TABLE [dbo].[brandsDay]  WITH CHECK ADD  CONSTRAINT [FK_brandsDay.locid] FOREIGN KEY([locid])
+REFERENCES [dbo].[locationInfo] ([locid])
+GO
+ALTER TABLE [dbo].[brandsDay] CHECK CONSTRAINT [FK_brandsDay.locid]
+GO
 ALTER TABLE [dbo].[brandsInfo]  WITH CHECK ADD  CONSTRAINT [FK_brandsInfo.nid] FOREIGN KEY([nid])
 REFERENCES [dbo].[naicsCodes] ([nid])
 GO
@@ -256,6 +263,11 @@ ALTER TABLE [dbo].[brandsWeek]  WITH CHECK ADD  CONSTRAINT [FK_brandsWeek.vid] F
 REFERENCES [dbo].[visitsInfo] ([vid])
 GO
 ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.vid]
+GO
+ALTER TABLE [dbo].[brandsWeek]  WITH CHECK ADD  CONSTRAINT [FK_brandsWeek.locid] FOREIGN KEY([locid])
+REFERENCES [dbo].[locationInfo] ([locid])
+GO
+ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.locid]
 GO
 ALTER TABLE [dbo].[categoriesXref]  WITH CHECK ADD  CONSTRAINT [FK_categoriesXref.cid] FOREIGN KEY([cid])
 REFERENCES [dbo].[categories] ([cid])
