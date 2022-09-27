@@ -669,6 +669,68 @@ sql_insertBrandsWeek='''EXECUTE [insertBrandsWeek]
   ,@al_relatedsameweekbrand_cnt=?
 '''
 
+sql_insertFootTrafficRecord='''EXECUTE [insertFootTrafficRecord]
+   @a_placekey=?
+  ,@c_locationname=?
+  ,@e_brands=?
+  ,@f_topcategory=?
+  ,@g_subcategory=?
+  ,@h_naicscode=?
+  ,@i_latitude=?
+  ,@j_longitude=?
+  ,@k_streetaddress=?
+  ,@l_city=?
+  ,@m_region=?
+  ,@n_postalcode=?
+  ,@p_phonenumber=?
+  ,@w_daterangestart=?
+  ,@y_rawvisitcounts=?
+  ,@z_rawvisitorcounts=?
+  ,@ac_poicbg=?
+  ,@ah_distancefromhome=?
+  ,@ai_mediumdwell=?
+  ,@an_normvisits_statescaling=?
+  ,@ao_normvisits_regionnaicsvisits=?
+  ,@ap_normvisits_regionnaicsvisitors=?
+  ,@aq_normvisits_totalvisits=?
+  ,@ar_normvisits_totalvisitors=?
+'''
+
+sql_insertHomeVisits='''EXECUTE [insertHomeVisits] 
+   @a_placekey=?
+  ,@w_daterangestart=?
+  ,@ad_visitorhomecbg=?
+  ,@ad_visitorhomecbg_cnt=?
+'''
+
+sql_insertWorkVisits='''EXECUTE [insertWorkVisits] 
+   @a_placekey=?
+  ,@w_daterangestart=?
+  ,@af_visitordaytimecbg=?
+  ,@af_visitordaytimecbg_cnt=?
+'''
+
+sql_insertBrandsDay='''EXECUTE [insertBrandsDay] 
+   @a_placekey=?
+  ,@w_daterangestart=?
+  ,@ak_relatedsamedaybrand=?
+  ,@ak_relatedsamedaybrand_cnt=?
+'''
+
+sql_insertBrandsWeek='''EXECUTE [insertBrandsWeek] 
+   @a_placekey=?
+  ,@w_daterangestart=?
+  ,@al_relatedsameweekbrand=?
+  ,@al_relatedsameweekbrand_cnt=?
+'''
+
+sql_insertDeviceCount='''EXECUTE [insertDeviceCount] 
+   @a_placekey=?
+  ,@w_daterangestart=?
+  ,@am_devicetype=?
+  ,@am_devicetype_cnt=?
+'''
+
 for row in file.itertuples():
     values_insertFootTrafficRecord = (row.placekey, row.location_name, row.brands, row.top_category, row.sub_category,
                                       int(row.naics_code), row.latitude, row.longitude, row.street_address, row.city,
@@ -711,5 +773,13 @@ for row in file.itertuples():
             x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
             values_insertBrandsWeek = (row.placekey, row.date_range_start, x[0], int(x[1]))
             cur.execute(sql_insertBrandsWeek, values_insertBrandsWeek)
+            cur.commit()
+            print(x)
+    
+    for x in row.device_type.split(','):
+        if x!= "{}":
+            x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+            values_insertDeviceCount = (row.placekey, row.date_range_start, x[0], int(x[1]))
+            cur.execute(sql_insertDeviceCount, values_insertDeviceCount)
             cur.commit()
             print(x)
