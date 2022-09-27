@@ -760,7 +760,7 @@ for row in file.itertuples():
             cur.commit()
             print(row.date_range_start+': ' +"Work CBG "+str(x[0])+" - "+str(x[1])+" visitors...")
             
-    for x in row.related_same_day_brand.split(','):
+    for x in row.related_same_day_brand.split(',"'):
         if x!= "{}":
             x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
             values_insertBrandsDay = (row.placekey, row.date_range_start, x[0], int(x[1]))
@@ -768,7 +768,7 @@ for row in file.itertuples():
             cur.commit()
             print(x)
             
-    for x in row.related_same_week_brand.split(','):
+    for x in row.related_same_week_brand.split(',"'):
         if x!= "{}":
             x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
             values_insertBrandsWeek = (row.placekey, row.date_range_start, x[0], int(x[1]))

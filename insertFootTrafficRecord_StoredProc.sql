@@ -47,7 +47,7 @@ DECLARE @vidout INT;
 
 	IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1
 		BEGIN
-			IF NOT EXISTS (SELECT nid FROM brandsInfo WHERE brand_name=@e_brands)
+			IF (SELECT nid FROM brandsInfo WHERE brand_name=@e_brands) IS NULL
 				BEGIN
 					UPDATE brandsInfo SET nid=@nidout WHERE brand_name=@e_brands;
 				END;
