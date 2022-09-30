@@ -669,61 +669,6 @@ sql_insertBrandsWeek='''EXECUTE [insertBrandsWeek]
   ,@al_relatedsameweekbrand_cnt=?
 '''
 
-sql_insertFootTrafficRecord='''EXECUTE [insertFootTrafficRecord]
-   @a_placekey=?
-  ,@c_locationname=?
-  ,@e_brands=?
-  ,@f_topcategory=?
-  ,@g_subcategory=?
-  ,@h_naicscode=?
-  ,@i_latitude=?
-  ,@j_longitude=?
-  ,@k_streetaddress=?
-  ,@l_city=?
-  ,@m_region=?
-  ,@n_postalcode=?
-  ,@p_phonenumber=?
-  ,@w_daterangestart=?
-  ,@y_rawvisitcounts=?
-  ,@z_rawvisitorcounts=?
-  ,@ac_poicbg=?
-  ,@ah_distancefromhome=?
-  ,@ai_mediumdwell=?
-  ,@an_normvisits_statescaling=?
-  ,@ao_normvisits_regionnaicsvisits=?
-  ,@ap_normvisits_regionnaicsvisitors=?
-  ,@aq_normvisits_totalvisits=?
-  ,@ar_normvisits_totalvisitors=?
-'''
-
-sql_insertHomeVisits='''EXECUTE [insertHomeVisits] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@ad_visitorhomecbg=?
-  ,@ad_visitorhomecbg_cnt=?
-'''
-
-sql_insertWorkVisits='''EXECUTE [insertWorkVisits] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@af_visitordaytimecbg=?
-  ,@af_visitordaytimecbg_cnt=?
-'''
-
-sql_insertBrandsDay='''EXECUTE [insertBrandsDay] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@ak_relatedsamedaybrand=?
-  ,@ak_relatedsamedaybrand_cnt=?
-'''
-
-sql_insertBrandsWeek='''EXECUTE [insertBrandsWeek] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@al_relatedsameweekbrand=?
-  ,@al_relatedsameweekbrand_cnt=?
-'''
-
 sql_insertDeviceCount='''EXECUTE [insertDeviceCount] 
    @a_placekey=?
   ,@w_daterangestart=?
@@ -731,66 +676,9 @@ sql_insertDeviceCount='''EXECUTE [insertDeviceCount]
   ,@am_devicetype_cnt=?
 '''
 
-sql_insertFootTrafficRecord='''EXECUTE [insertFootTrafficRecord]
+sql_insertCategories='''EXECUTE [insertCategories] 
    @a_placekey=?
-  ,@c_locationname=?
-  ,@e_brands=?
-  ,@f_topcategory=?
-  ,@g_subcategory=?
-  ,@h_naicscode=?
-  ,@i_latitude=?
-  ,@j_longitude=?
-  ,@k_streetaddress=?
-  ,@l_city=?
-  ,@m_region=?
-  ,@n_postalcode=?
-  ,@p_phonenumber=?
-  ,@w_daterangestart=?
-  ,@y_rawvisitcounts=?
-  ,@z_rawvisitorcounts=?
-  ,@ac_poicbg=?
-  ,@ah_distancefromhome=?
-  ,@ai_mediumdwell=?
-  ,@an_normvisits_statescaling=?
-  ,@ao_normvisits_regionnaicsvisits=?
-  ,@ap_normvisits_regionnaicsvisitors=?
-  ,@aq_normvisits_totalvisits=?
-  ,@ar_normvisits_totalvisitors=?
-'''
-
-sql_insertHomeVisits='''EXECUTE [insertHomeVisits] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@ad_visitorhomecbg=?
-  ,@ad_visitorhomecbg_cnt=?
-'''
-
-sql_insertWorkVisits='''EXECUTE [insertWorkVisits] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@af_visitordaytimecbg=?
-  ,@af_visitordaytimecbg_cnt=?
-'''
-
-sql_insertBrandsDay='''EXECUTE [insertBrandsDay] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@ak_relatedsamedaybrand=?
-  ,@ak_relatedsamedaybrand_cnt=?
-'''
-
-sql_insertBrandsWeek='''EXECUTE [insertBrandsWeek] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@al_relatedsameweekbrand=?
-  ,@al_relatedsameweekbrand_cnt=?
-'''
-
-sql_insertDeviceCount='''EXECUTE [insertDeviceCount] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@am_devicetype=?
-  ,@am_devicetype_cnt=?
+  ,@r_categorytag=?
 '''
 
 for row in file.itertuples():
@@ -851,5 +739,12 @@ for row in file.itertuples():
             x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
             values_insertDeviceCount = (row.placekey, row.date_range_start, x[0], int(x[1]))
             cur.execute(sql_insertDeviceCount, values_insertDeviceCount)
+            cur.commit()
+            #print(x)
+    
+    for x in str(row.category_tags).split(','):
+        if x != '0':
+            values_insertCategories = (row.placekey, x)
+            cur.execute(sql_insertCategories, values_insertCategories)
             cur.commit()
             #print(x)
