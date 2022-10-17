@@ -3,15 +3,7 @@ import json
 import numpy as np
 import pandas as pd
 import pyodbc
-
-conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=;'
-                      'Database=Foot_Traffic;' # Foot_Traffic DB already initialized
-                      'UID=;'
-                      'PWD=;'
-                      'Trusted_Connection=no;')
-
-cur = conn.cursor()
+import time
 
 def initialize_database_tables():
 	global conn  
@@ -614,137 +606,139 @@ def initialize_database_stored_procs():
     cur.close()
     conn.close
 
-sql_insertFootTrafficRecord='''EXECUTE [insertFootTrafficRecord]
-   @a_placekey=?
-  ,@c_locationname=?
-  ,@e_brands=?
-  ,@f_topcategory=?
-  ,@g_subcategory=?
-  ,@h_naicscode=?
-  ,@i_latitude=?
-  ,@j_longitude=?
-  ,@k_streetaddress=?
-  ,@l_city=?
-  ,@m_region=?
-  ,@n_postalcode=?
-  ,@p_phonenumber=?
-  ,@w_daterangestart=?
-  ,@y_rawvisitcounts=?
-  ,@z_rawvisitorcounts=?
-  ,@ac_poicbg=?
-  ,@ah_distancefromhome=?
-  ,@ai_mediumdwell=?
-  ,@an_normvisits_statescaling=?
-  ,@ao_normvisits_regionnaicsvisits=?
-  ,@ap_normvisits_regionnaicsvisitors=?
-  ,@aq_normvisits_totalvisits=?
-  ,@ar_normvisits_totalvisitors=?
-'''
+def poiRecordInsertion(file):
 
-sql_insertHomeVisits='''EXECUTE [insertHomeVisits] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@ad_visitorhomecbg=?
-  ,@ad_visitorhomecbg_cnt=?
-'''
+    sql_insertFootTrafficRecord='''EXECUTE [insertFootTrafficRecord]
+       @a_placekey=?
+      ,@c_locationname=?
+      ,@e_brands=?
+      ,@f_topcategory=?
+      ,@g_subcategory=?
+      ,@h_naicscode=?
+      ,@i_latitude=?
+      ,@j_longitude=?
+      ,@k_streetaddress=?
+      ,@l_city=?
+      ,@m_region=?
+      ,@n_postalcode=?
+      ,@p_phonenumber=?
+      ,@w_daterangestart=?
+      ,@y_rawvisitcounts=?
+      ,@z_rawvisitorcounts=?
+      ,@ac_poicbg=?
+      ,@ah_distancefromhome=?
+      ,@ai_mediumdwell=?
+      ,@an_normvisits_statescaling=?
+      ,@ao_normvisits_regionnaicsvisits=?
+      ,@ap_normvisits_regionnaicsvisitors=?
+      ,@aq_normvisits_totalvisits=?
+      ,@ar_normvisits_totalvisitors=?
+    '''
 
-sql_insertWorkVisits='''EXECUTE [insertWorkVisits] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@af_visitordaytimecbg=?
-  ,@af_visitordaytimecbg_cnt=?
-'''
+    sql_insertHomeVisits='''EXECUTE [insertHomeVisits] 
+       @a_placekey=?
+      ,@w_daterangestart=?
+      ,@ad_visitorhomecbg=?
+      ,@ad_visitorhomecbg_cnt=?
+    '''
 
-sql_insertBrandsDay='''EXECUTE [insertBrandsDay] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@ak_relatedsamedaybrand=?
-  ,@ak_relatedsamedaybrand_cnt=?
-'''
+    sql_insertWorkVisits='''EXECUTE [insertWorkVisits] 
+       @a_placekey=?
+      ,@w_daterangestart=?
+      ,@af_visitordaytimecbg=?
+      ,@af_visitordaytimecbg_cnt=?
+    '''
 
-sql_insertBrandsWeek='''EXECUTE [insertBrandsWeek] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@al_relatedsameweekbrand=?
-  ,@al_relatedsameweekbrand_cnt=?
-'''
+    sql_insertBrandsDay='''EXECUTE [insertBrandsDay] 
+       @a_placekey=?
+      ,@w_daterangestart=?
+      ,@ak_relatedsamedaybrand=?
+      ,@ak_relatedsamedaybrand_cnt=?
+    '''
 
-sql_insertDeviceCount='''EXECUTE [insertDeviceCount] 
-   @a_placekey=?
-  ,@w_daterangestart=?
-  ,@am_devicetype=?
-  ,@am_devicetype_cnt=?
-'''
+    sql_insertBrandsWeek='''EXECUTE [insertBrandsWeek] 
+       @a_placekey=?
+      ,@w_daterangestart=?
+      ,@al_relatedsameweekbrand=?
+      ,@al_relatedsameweekbrand_cnt=?
+    '''
 
-sql_insertCategories='''EXECUTE [insertCategories] 
-   @a_placekey=?
-  ,@r_categorytag=?
-'''
+    sql_insertDeviceCount='''EXECUTE [insertDeviceCount] 
+       @a_placekey=?
+      ,@w_daterangestart=?
+      ,@am_devicetype=?
+      ,@am_devicetype_cnt=?
+    '''
 
-for row in file.itertuples():
-    values_insertFootTrafficRecord = (row.placekey, row.location_name, row.brands, row.top_category, row.sub_category,
-                                      int(row.naics_code), row.latitude, row.longitude, row.street_address, row.city,
-                                      row.region, int(row.postal_code), int(row.phone_number), row.date_range_start,
-                                      int(row.raw_visit_counts), int(row.raw_visitor_counts), int(row.poi_cbg),
-                                      int(row.distance_from_home), row.median_dwell, row.normalized_visits_by_state_scaling,
-                                      row.normalized_visits_by_region_naics_visits, row.normalized_visits_by_region_naics_visitors,
-                                      row.normalized_visits_by_total_visits,row.normalized_visits_by_total_visitors )
-    cur.execute(sql_insertFootTrafficRecord, values_insertFootTrafficRecord)
-    cur.commit()
-    print(row.location_name[:20]+', '+row.street_address+', '+row.city+', '+row.region+' '+str(row.postal_code)+'... '+
-         row.date_range_start+": "+str(int(row.normalized_visits_by_state_scaling))+' total visitors...')
+    sql_insertCategories='''EXECUTE [insertCategories] 
+       @a_placekey=?
+      ,@r_categorytag=?
+    '''
 
-    for x in row.visitor_home_cbgs.split(','):
-        if x!= "{}":
-            x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-            if (x[0][0]).isalpha() is True: pass
-            else:
-                values_insertHomeVisits = (row.placekey, row.date_range_start, int(x[0]), int(x[1]))
-                cur.execute(sql_insertHomeVisits, values_insertHomeVisits)
+    for row in file.itertuples():
+        values_insertFootTrafficRecord = (row.placekey, row.location_name, row.brands, row.top_category, row.sub_category,
+                                          int(row.naics_code), row.latitude, row.longitude, row.street_address, row.city,
+                                          row.region, int(row.postal_code), int(row.phone_number), row.date_range_start,
+                                          int(row.raw_visit_counts), int(row.raw_visitor_counts), int(row.poi_cbg),
+                                          int(row.distance_from_home), row.median_dwell, row.normalized_visits_by_state_scaling,
+                                          row.normalized_visits_by_region_naics_visits, row.normalized_visits_by_region_naics_visitors,
+                                          row.normalized_visits_by_total_visits,row.normalized_visits_by_total_visitors )
+        cur.execute(sql_insertFootTrafficRecord, values_insertFootTrafficRecord)
+        cur.commit()
+        print(row.location_name[:20]+', '+row.street_address+', '+row.city+', '+row.region+' '+str(row.postal_code)+'... '+
+             row.date_range_start+": "+str(int(row.normalized_visits_by_state_scaling))+' total visitors...')
+
+        for x in row.visitor_home_cbgs.split(','):
+            if x!= "{}":
+                x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+                if (x[0][0]).isalpha() is True: pass
+                else:
+                    values_insertHomeVisits = (row.placekey, row.date_range_start, int(x[0]), int(x[1]))
+                    cur.execute(sql_insertHomeVisits, values_insertHomeVisits)
+                    cur.commit()
+                    #print(x)
+
+        for x in row.visitor_daytime_cbgs.split(','):
+            if x!= "{}":
+                x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+                if (x[0][0]).isalpha() is True: pass
+                else:
+                    values_insertWorkVisits = (row.placekey, row.date_range_start, int(x[0]), int(x[1]))
+                    cur.execute(sql_insertWorkVisits, values_insertWorkVisits)
+                    cur.commit()
+                    #print(x)
+
+        for x in row.related_same_day_brand.split(',"'):
+            if x!= "{}":
+                x = (x.replace('{"',"")).replace('\\',"").replace("}","").split('":')
+                if (x[1][0]).isalpha() is True: pass
+                else:
+                    values_insertBrandsDay = (row.placekey, row.date_range_start, x[0], int(x[1]))
+                    cur.execute(sql_insertBrandsDay, values_insertBrandsDay)
+                    cur.commit()
+                    #print(x)
+
+        for x in row.related_same_week_brand.split(',"'):
+            if x!= "{}":
+                x = (x.replace('{"',"")).replace('\\',"").replace("}","").split('":')
+                if (x[1][0]).isalpha() is True: pass
+                else:
+                    values_insertBrandsDay = (row.placekey, row.date_range_start, x[0], int(x[1]))
+                    cur.execute(sql_insertBrandsDay, values_insertBrandsDay)
+                    cur.commit()
+                    #print(x)
+
+        for x in row.device_type.split(','):
+            if x!= "{}":
+                x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+                values_insertDeviceCount = (row.placekey, row.date_range_start, x[0], int(x[1]))
+                cur.execute(sql_insertDeviceCount, values_insertDeviceCount)
                 cur.commit()
                 #print(x)
-    
-    for x in row.visitor_daytime_cbgs.split(','):
-        if x!= "{}":
-            x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-            if (x[0][0]).isalpha() is True: pass
-            else:
-                values_insertWorkVisits = (row.placekey, row.date_range_start, int(x[0]), int(x[1]))
-                cur.execute(sql_insertWorkVisits, values_insertWorkVisits)
+
+        for x in str(row.category_tags).split(','):
+            if x != '0':
+                values_insertCategories = (row.placekey, x)
+                cur.execute(sql_insertCategories, values_insertCategories)
                 cur.commit()
                 #print(x)
-            
-    for x in row.related_same_day_brand.split(',"'):
-        if x!= "{}":
-            x = (x.replace('{"',"")).replace('\\',"").replace("}","").split('":')
-            if (x[1][0]).isalpha() is True: pass
-            else:
-                values_insertBrandsDay = (row.placekey, row.date_range_start, x[0], int(x[1]))
-                cur.execute(sql_insertBrandsDay, values_insertBrandsDay)
-                cur.commit()
-                #print(x)
-            
-    for x in row.related_same_week_brand.split(',"'):
-        if x!= "{}":
-            x = (x.replace('{"',"")).replace('\\',"").replace("}","").split('":')
-            if (x[1][0]).isalpha() is True: pass
-            else:
-                values_insertBrandsDay = (row.placekey, row.date_range_start, x[0], int(x[1]))
-                cur.execute(sql_insertBrandsDay, values_insertBrandsDay)
-                cur.commit()
-                #print(x)
-    
-    for x in row.device_type.split(','):
-        if x!= "{}":
-            x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-            values_insertDeviceCount = (row.placekey, row.date_range_start, x[0], int(x[1]))
-            cur.execute(sql_insertDeviceCount, values_insertDeviceCount)
-            cur.commit()
-            #print(x)
-    
-    for x in str(row.category_tags).split(','):
-        if x != '0':
-            values_insertCategories = (row.placekey, x)
-            cur.execute(sql_insertCategories, values_insertCategories)
-            cur.commit()
-            #print(x)
