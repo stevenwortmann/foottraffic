@@ -607,6 +607,8 @@ def initialize_database_stored_procs():
     conn.close
 
 def poiRecordInsertion(file):
+	global conn
+	global cur
 
     sql_insertFootTrafficRecord='''EXECUTE [insertFootTrafficRecord]
        @a_placekey=?
@@ -742,3 +744,34 @@ def poiRecordInsertion(file):
                 cur.execute(sql_insertCategories, values_insertCategories)
                 cur.commit()
                 #print(x)
+
+def main():
+    driver = '{SQL Server}'
+    server = 'PDTTESQLDEV01'
+    db = 'Foot_Traffic'
+    user = 'FTStudent01;'
+    password = 'FTStudent01;'
+
+    while True:
+        time.sleep(.001)
+        if not conn:  # No connection yet? Connect.
+            conn = pyodbc.connect(driver=driver, server=server, database=db,
+                            user=user, password=password, trusted_connection='yes')
+            cur = conn.cursor()
+            initialize_database_tables()
+            initialize_database_stored_procs() #initialize database resources before insertion
+        try:
+            poiRecordInsertion(raw_csv) # csv passed through
+        except pyodbc.Error as pe:
+            print("Error:", pe)
+            if pe.args[0] == "08S01":  # Communication error.
+                # Nuke the connection and retry.
+                try:
+                    conn.close()
+                except:
+                    pass
+                conn = pyodbc.connect(driver=driver, server=server, database=db,
+                            user=user, password=password, trusted_connection='yes')
+                cur = conn.cursor()
+                continue
+            raise  # Re-raise any other exception
