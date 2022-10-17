@@ -1,4 +1,4 @@
-ALTER PROCEDURE insertCategories(
+ALTER PROCEDURE [dbo].[insertCategories](
 	@a_placekey VARCHAR(max),
 	@r_categorytag VARCHAR(max)
 )

@@ -22,7 +22,7 @@ CREATE TABLE [dbo].[brandsDay](
 	[bdid] [int] IDENTITY(1,1) NOT NULL,
 	[bid] [int] NOT NULL,
 	[vid] [int] NOT NULL,
-    [locid] [int] NOT NULL,
+	[locid] [int] NOT NULL,
 	[visit_count] [int] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -30,7 +30,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[brandsInfo]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[brandsInfo]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -45,7 +45,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[brandsWeek]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[brandsWeek]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -54,7 +54,7 @@ CREATE TABLE [dbo].[brandsWeek](
 	[bwid] [int] IDENTITY(1,1) NOT NULL,
 	[bid] [int] NOT NULL,
 	[vid] [int] NOT NULL,
-    [locid] [int] NOT NULL,
+	[locid] [int] NOT NULL,
 	[visit_count] [int] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -62,7 +62,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[categories]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[categories]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -76,7 +76,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[categoriesXref]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[categoriesXref]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -91,7 +91,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[censusBlockGroups]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[censusBlockGroups]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -105,7 +105,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[deviceLog]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[deviceLog]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -121,7 +121,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[devices]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[devices]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -135,7 +135,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[homeVisits]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[homeVisits]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -152,7 +152,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[locationInfo]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[locationInfo]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -177,7 +177,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[naicsCodes]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[naicsCodes]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -193,7 +193,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[visitsInfo]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[visitsInfo]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -217,7 +217,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[workVisits]    Script Date: 9/22/2022 3:02:42 PM ******/
+/****** Object:  Table [dbo].[workVisits]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -239,15 +239,15 @@ REFERENCES [dbo].[brandsInfo] ([bid])
 GO
 ALTER TABLE [dbo].[brandsDay] CHECK CONSTRAINT [FK_brandsDay.bid]
 GO
-ALTER TABLE [dbo].[brandsDay]  WITH CHECK ADD  CONSTRAINT [FK_brandsDay.vid] FOREIGN KEY([vid])
-REFERENCES [dbo].[visitsInfo] ([vid])
-GO
-ALTER TABLE [dbo].[brandsDay] CHECK CONSTRAINT [FK_brandsDay.vid]
-GO
 ALTER TABLE [dbo].[brandsDay]  WITH CHECK ADD  CONSTRAINT [FK_brandsDay.locid] FOREIGN KEY([locid])
 REFERENCES [dbo].[locationInfo] ([locid])
 GO
 ALTER TABLE [dbo].[brandsDay] CHECK CONSTRAINT [FK_brandsDay.locid]
+GO
+ALTER TABLE [dbo].[brandsDay]  WITH CHECK ADD  CONSTRAINT [FK_brandsDay.vid] FOREIGN KEY([vid])
+REFERENCES [dbo].[visitsInfo] ([vid])
+GO
+ALTER TABLE [dbo].[brandsDay] CHECK CONSTRAINT [FK_brandsDay.vid]
 GO
 ALTER TABLE [dbo].[brandsInfo]  WITH CHECK ADD  CONSTRAINT [FK_brandsInfo.nid] FOREIGN KEY([nid])
 REFERENCES [dbo].[naicsCodes] ([nid])
@@ -259,15 +259,15 @@ REFERENCES [dbo].[brandsInfo] ([bid])
 GO
 ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.bid]
 GO
-ALTER TABLE [dbo].[brandsWeek]  WITH CHECK ADD  CONSTRAINT [FK_brandsWeek.vid] FOREIGN KEY([vid])
-REFERENCES [dbo].[visitsInfo] ([vid])
-GO
-ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.vid]
-GO
 ALTER TABLE [dbo].[brandsWeek]  WITH CHECK ADD  CONSTRAINT [FK_brandsWeek.locid] FOREIGN KEY([locid])
 REFERENCES [dbo].[locationInfo] ([locid])
 GO
 ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.locid]
+GO
+ALTER TABLE [dbo].[brandsWeek]  WITH CHECK ADD  CONSTRAINT [FK_brandsWeek.vid] FOREIGN KEY([vid])
+REFERENCES [dbo].[visitsInfo] ([vid])
+GO
+ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.vid]
 GO
 ALTER TABLE [dbo].[categoriesXref]  WITH CHECK ADD  CONSTRAINT [FK_categoriesXref.cid] FOREIGN KEY([cid])
 REFERENCES [dbo].[categories] ([cid])

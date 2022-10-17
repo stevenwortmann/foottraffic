@@ -1,4 +1,4 @@
-ALTER PROCEDURE insertBrandsDay(
+ALTER PROCEDURE [dbo].[insertBrandsDay](
 	@a_placekey VARCHAR(max),
 	@w_daterangestart VARCHAR(max),
 	@ak_relatedsamedaybrand VARCHAR(max),

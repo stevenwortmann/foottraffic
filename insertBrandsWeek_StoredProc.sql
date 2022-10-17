@@ -1,4 +1,4 @@
-ALTER PROCEDURE insertBrandsWeek(
+ALTER PROCEDURE [dbo].[insertBrandsWeek](
 	@a_placekey VARCHAR(max),
 	@w_daterangestart VARCHAR(max),
 	@al_relatedsameweekbrand VARCHAR(max),

@@ -1,4 +1,4 @@
-ALTER PROCEDURE insertWorkVisits(
+ALTER PROCEDURE [dbo].[insertWorkVisits](
 	@a_placekey VARCHAR(max),
 	@w_daterangestart VARCHAR(max),
 	@af_visitordaytimecbg BIGINT,

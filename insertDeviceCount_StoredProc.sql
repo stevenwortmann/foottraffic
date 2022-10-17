@@ -1,4 +1,4 @@
-ALTER PROCEDURE insertDeviceCount( -- 'device_name' field fully populated with init_db_tables
+ALTER PROCEDURE [dbo].[insertDeviceCount]( -- 'device_name' field fully populated with init_db_tables
 	@a_placekey VARCHAR(max),
 	@w_daterangestart VARCHAR(max),
 	@am_devicetype VARCHAR(max),

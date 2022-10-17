@@ -31,13 +31,14 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[brandsDay](
-        [bdid] [int] IDENTITY(1,1) NOT NULL,
-        [bid] [int] NOT NULL,
-        [vid] [int] NOT NULL,
-        [visit_count] [int] NOT NULL,
+            [bdid] [int] IDENTITY(1,1) NOT NULL,
+            [bid] [int] NOT NULL,
+            [vid] [int] NOT NULL,
+            [locid] [int] NOT NULL,
+            [visit_count] [int] NOT NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [bid] ASC
+            [bdid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
@@ -46,12 +47,12 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[brandsInfo](
-        [bid] [int] IDENTITY(1,1) NOT NULL,
-        [nid] [int] NOT NULL,
-        [brand_name] [varchar](max) NOT NULL,
+            [bid] [int] IDENTITY(1,1) NOT NULL,
+            [nid] [int] NULL,
+            [brand_name] [varchar](max) NOT NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [bid] ASC
+            [bid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
         GO
@@ -60,13 +61,14 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[brandsWeek](
-        [bwid] [int] IDENTITY(1,1) NOT NULL,
-        [bid] [int] NOT NULL,
-        [vid] [int] NOT NULL,
-        [visit_count] [int] NOT NULL,
+            [bwid] [int] IDENTITY(1,1) NOT NULL,
+            [bid] [int] NOT NULL,
+            [vid] [int] NOT NULL,
+            [locid] [int] NOT NULL,
+            [visit_count] [int] NOT NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [bwid] ASC
+            [bwid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
@@ -75,11 +77,11 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[categories](
-        [cid] [int] IDENTITY(1,1) NOT NULL,
-        [category] [varchar](max) NOT NULL,
+            [cid] [int] IDENTITY(1,1) NOT NULL,
+            [category] [varchar](max) NOT NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [cid] ASC
+            [cid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
         GO
@@ -88,12 +90,12 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[categoriesXref](
-        [cxid] [int] IDENTITY(1,1) NOT NULL,
-        [locid] [int] NOT NULL,
-        [cid] [int] NOT NULL,
+            [cxid] [int] IDENTITY(1,1) NOT NULL,
+            [locid] [int] NOT NULL,
+            [cid] [int] NOT NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [cxid] ASC
+            [cxid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
@@ -101,13 +103,12 @@ def initialize_database_tables():
         GO
         SET QUOTED_IDENTIFIER ON
         GO
-
         CREATE TABLE [dbo].[censusBlockGroups](
-        [cbgid] [int] IDENTITY(1,1) NOT NULL,
-        [cbg_number] [int] NOT NULL,
+            [cbgid] [int] IDENTITY(1,1) NOT NULL,
+            [cbg_number] [bigint] NOT NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [cbgid] ASC
+            [cbgid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
@@ -116,13 +117,13 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[deviceLog](
-        [dlid] [int] IDENTITY(1,1) NOT NULL,
-        [did] [int] NOT NULL,
-        [vid] [int] NOT NULL,
-        [user_count] [int] NOT NULL,
+            [dlid] [int] IDENTITY(1,1) NOT NULL,
+            [did] [int] NOT NULL,
+            [vid] [int] NOT NULL,
+            [user_count] [int] NOT NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [dlid] ASC
+            [dlid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
@@ -131,11 +132,11 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[devices](
-        [did] [int] IDENTITY(1,1) NOT NULL,
-        [device_name] [varchar](max) NOT NULL,
+            [did] [int] IDENTITY(1,1) NOT NULL,
+            [device_name] [varchar](max) NOT NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [did] ASC
+            [did] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
         GO
@@ -144,13 +145,14 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[homeVisits](
-        [hvid] [int] IDENTITY(1,1) NOT NULL,
-        [vid] [int] NOT NULL,
-        [cbgid] [int] NOT NULL,
-        [visit_count] [int] NOT NULL,
+            [hvid] [int] IDENTITY(1,1) NOT NULL,
+            [locid] [int] NOT NULL,
+            [vid] [int] NOT NULL,
+            [cbgid] [int] NOT NULL,
+            [visit_count] [int] NOT NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [hvid] ASC
+            [hvid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
@@ -159,21 +161,22 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[locationInfo](
-        [locid] [int] IDENTITY(1,1) NOT NULL,
-        [nid] [int] NULL,
-        [bid] [int] NULL,
-        [cbgid] [int] NULL,
-        [placekey] [varchar](max) NULL,
-        [location_name] [varchar](max) NULL,
-        [latitude] [float] NULL,
-        [longitude] [float] NULL,
-        [street_address] [varchar](max) NULL,
-        [city] [varchar](max) NULL,
-        [region] [varchar](max) NULL,
-        [phone_number] [varchar](max) NULL,
+            [locid] [int] IDENTITY(1,1) NOT NULL,
+            [nid] [int] NULL,
+            [bid] [int] NULL,
+            [cbgid] [int] NULL,
+            [placekey] [varchar](max) NULL,
+            [location_name] [varchar](max) NULL,
+            [latitude] [float] NULL,
+            [longitude] [float] NULL,
+            [street_address] [varchar](max) NULL,
+            [city] [varchar](max) NULL,
+            [region] [varchar](max) NULL,
+            [postal_code] [int] NULL,
+            [phone_number] [bigint] NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [locid] ASC
+            [locid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
         GO
@@ -182,13 +185,13 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[naicsCodes](
-        [nid] [int] IDENTITY(1,1) NOT NULL,
-        [naics_code] [int] NOT NULL,
-        [top_category] [varchar](max) NOT NULL,
-        [sub_category] [varchar](max) NULL,
+            [nid] [int] IDENTITY(1,1) NOT NULL,
+            [naics_code] [int] NOT NULL,
+            [top_category] [varchar](max) NOT NULL,
+            [sub_category] [varchar](max) NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [nid] ASC
+            [nid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
         GO
@@ -197,21 +200,21 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[visitsInfo](
-        [vid] [int] IDENTITY(1,1) NOT NULL,
-        [locid] [int] NOT NULL,
-        [week_begin] [date] NOT NULL,
-        [raw_visit_counts] [int] NOT NULL,
-        [raw_visitor_counts] [int] NOT NULL,
-        [distance_from_home] [int] NULL,
-        [median_dwell] [float] NULL,
-        [normalized_visits_by_state_scaling] [float] NOT NULL,
-        [normalized_visits_by_region_naics_visits] [float] NOT NULL,
-        [normalized_visits_by_region_naics_visitors] [float] NOT NULL,
-        [normalized_visits_by_total_visits] [float] NOT NULL,
-        [normalized_visits_by_total_visitors] [float] NOT NULL,
+            [vid] [int] IDENTITY(1,1) NOT NULL,
+            [locid] [int] NOT NULL,
+            [week_begin] [date] NOT NULL,
+            [raw_visit_counts] [int] NOT NULL,
+            [raw_visitor_counts] [int] NOT NULL,
+            [distance_from_home] [int] NULL,
+            [median_dwell] [float] NULL,
+            [normalized_visits_by_state_scaling] [float] NOT NULL,
+            [normalized_visits_by_region_naics_visits] [float] NOT NULL,
+            [normalized_visits_by_region_naics_visitors] [float] NOT NULL,
+            [normalized_visits_by_total_visits] [float] NOT NULL,
+            [normalized_visits_by_total_visitors] [float] NOT NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [vid] ASC
+            [vid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
@@ -220,13 +223,14 @@ def initialize_database_tables():
         SET QUOTED_IDENTIFIER ON
         GO
         CREATE TABLE [dbo].[workVisits](
-        [wvid] [int] IDENTITY(1,1) NOT NULL,
-        [vid] [int] NOT NULL,
-        [cbgid] [int] NOT NULL,
-        [visit_count] [int] NOT NULL,
+            [wvid] [int] IDENTITY(1,1) NOT NULL,
+            [locid] [int] NOT NULL,
+            [vid] [int] NOT NULL,
+            [cbgid] [int] NOT NULL,
+            [visit_count] [int] NOT NULL,
         PRIMARY KEY CLUSTERED 
         (
-        [wvid] ASC
+            [wvid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
@@ -234,6 +238,11 @@ def initialize_database_tables():
         REFERENCES [dbo].[brandsInfo] ([bid])
         GO
         ALTER TABLE [dbo].[brandsDay] CHECK CONSTRAINT [FK_brandsDay.bid]
+        GO
+        ALTER TABLE [dbo].[brandsDay]  WITH CHECK ADD  CONSTRAINT [FK_brandsDay.locid] FOREIGN KEY([locid])
+        REFERENCES [dbo].[locationInfo] ([locid])
+        GO
+        ALTER TABLE [dbo].[brandsDay] CHECK CONSTRAINT [FK_brandsDay.locid]
         GO
         ALTER TABLE [dbo].[brandsDay]  WITH CHECK ADD  CONSTRAINT [FK_brandsDay.vid] FOREIGN KEY([vid])
         REFERENCES [dbo].[visitsInfo] ([vid])
@@ -250,20 +259,25 @@ def initialize_database_tables():
         GO
         ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.bid]
         GO
+        ALTER TABLE [dbo].[brandsWeek]  WITH CHECK ADD  CONSTRAINT [FK_brandsWeek.locid] FOREIGN KEY([locid])
+        REFERENCES [dbo].[locationInfo] ([locid])
+        GO
+        ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.locid]
+        GO
         ALTER TABLE [dbo].[brandsWeek]  WITH CHECK ADD  CONSTRAINT [FK_brandsWeek.vid] FOREIGN KEY([vid])
         REFERENCES [dbo].[visitsInfo] ([vid])
         GO
         ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.vid]
         GO
-        ALTER TABLE [dbo].[categoriesXref]  WITH CHECK ADD  CONSTRAINT [FK_categoriesXref.locid] FOREIGN KEY([locid])
-        REFERENCES [dbo].[locationInfo] ([locid])
-        GO
-        ALTER TABLE [dbo].[categoriesXref] CHECK CONSTRAINT [FK_categoriesXref.locid]
-        GO
         ALTER TABLE [dbo].[categoriesXref]  WITH CHECK ADD  CONSTRAINT [FK_categoriesXref.cid] FOREIGN KEY([cid])
         REFERENCES [dbo].[categories] ([cid])
         GO
         ALTER TABLE [dbo].[categoriesXref] CHECK CONSTRAINT [FK_categoriesXref.cid]
+        GO
+        ALTER TABLE [dbo].[categoriesXref]  WITH CHECK ADD  CONSTRAINT [FK_categoriesXref.locid] FOREIGN KEY([locid])
+        REFERENCES [dbo].[locationInfo] ([locid])
+        GO
+        ALTER TABLE [dbo].[categoriesXref] CHECK CONSTRAINT [FK_categoriesXref.locid]
         GO
         ALTER TABLE [dbo].[deviceLog]  WITH CHECK ADD  CONSTRAINT [FK_deviceLog.did] FOREIGN KEY([did])
         REFERENCES [dbo].[devices] ([did])
@@ -279,6 +293,11 @@ def initialize_database_tables():
         REFERENCES [dbo].[censusBlockGroups] ([cbgid])
         GO
         ALTER TABLE [dbo].[homeVisits] CHECK CONSTRAINT [FK_homeVisits.cbgid]
+        GO
+        ALTER TABLE [dbo].[homeVisits]  WITH CHECK ADD  CONSTRAINT [FK_homeVisits.locid] FOREIGN KEY([locid])
+        REFERENCES [dbo].[locationInfo] ([locid])
+        GO
+        ALTER TABLE [dbo].[homeVisits] CHECK CONSTRAINT [FK_homeVisits.locid]
         GO
         ALTER TABLE [dbo].[homeVisits]  WITH CHECK ADD  CONSTRAINT [FK_homeVisits.vid] FOREIGN KEY([vid])
         REFERENCES [dbo].[visitsInfo] ([vid])
@@ -310,6 +329,11 @@ def initialize_database_tables():
         GO
         ALTER TABLE [dbo].[workVisits] CHECK CONSTRAINT [FK_workVisits.cbgid]
         GO
+        ALTER TABLE [dbo].[workVisits]  WITH CHECK ADD  CONSTRAINT [FK_workVisits.locid] FOREIGN KEY([locid])
+        REFERENCES [dbo].[locationInfo] ([locid])
+        GO
+        ALTER TABLE [dbo].[workVisits] CHECK CONSTRAINT [FK_workVisits.locid]
+        GO
         ALTER TABLE [dbo].[workVisits]  WITH CHECK ADD  CONSTRAINT [FK_workVisits.vid] FOREIGN KEY([vid])
         REFERENCES [dbo].[visitsInfo] ([vid])
         GO
@@ -335,7 +359,7 @@ def initialize_database_stored_procs():
 	global cur
 
 	sql1=('''
-        ALTER PROCEDURE insertBrandsDay(
+        CREATE PROCEDURE insertBrandsDay(
         @a_placekey VARCHAR(max),
         @w_daterangestart VARCHAR(max),
         @ak_relatedsamedaybrand VARCHAR(max),
@@ -360,7 +384,7 @@ def initialize_database_stored_procs():
 	    ''')
 	
 	sql2=('''
-        ALTER PROCEDURE insertBrandsWeek(
+        CREATE PROCEDURE [dbo].[insertBrandsWeek](
         @a_placekey VARCHAR(max),
         @w_daterangestart VARCHAR(max),
         @al_relatedsameweekbrand VARCHAR(max),
@@ -370,22 +394,35 @@ def initialize_database_stored_procs():
         BEGIN
         DECLARE @vidout INT;
         DECLARE @bidout INT;
+        DECLARE @locidout INT;
 
         BEGIN
+
+        IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@al_relatedsameweekbrand)=1
+        BEGIN
+        SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@al_relatedsameweekbrand);
+        END;
+        ELSE
+        BEGIN
+        INSERT INTO brandsInfo(brand_name)
+        VALUES (@al_relatedsameweekbrand);
+        SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
+        END;
+
 
         IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
         BEGIN
-        SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
-        SET @bidout = (SELECT TOP 1 bid FROM brandsInfo WHERE (brand_name=@al_relatedsameweekbrand) ORDER BY bid DESC);
-        INSERT INTO brandsWeek(vid, bid, visit_count)
-        VALUES (@vidout, @bidout, @al_relatedsameweekbrand_cnt);
+        SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart));
+        SET @locidout = (SELECT TOP 1 locid FROM locationInfo l WHERE l.placekey=@a_placekey);		
+        INSERT INTO brandsWeek(vid, bid, locid, visit_count)
+        VALUES (@vidout, @bidout, @locidout, @al_relatedsameweekbrand_cnt);
         END;
         END;
         END;
 	    ''')
 	
 	sql3=('''
-        ALTER PROCEDURE insertCategories(
+        CREATE PROCEDURE [dbo].[insertCategories](
         @a_placekey VARCHAR(max),
         @r_categorytag VARCHAR(max)
         )
@@ -398,14 +435,14 @@ def initialize_database_stored_procs():
 
         IF (SELECT COUNT(1) FROM categories WHERE (category=@r_categorytag))=1 
         BEGIN
-        SELECT cid INTO cidout FROM categories WHERE (category=@r_categorytag)
+        SET @cidout=(SELECT cid FROM categories WHERE category=@r_categorytag)
         END;
         ELSE
         BEGIN
         INSERT INTO categories(category)
-        VALUES (@r_categorytag)
+        VALUES (@r_categorytag);
         SET @cidout=(SELECT TOP 1 cid FROM categories ORDER BY cid DESC);
-        SET @locidout=(SELECT TOP 1 locid FROM locationInfo ORDER BY locid DESC);
+        SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey);
         INSERT INTO categoriesXref(locid, cid)
         VALUES (@locidout, @cidout);
         END;
@@ -414,7 +451,7 @@ def initialize_database_stored_procs():
 	    ''')
 	
 	sql4=('''
-        ALTER PROCEDURE insertDeviceCount( -- 'device_name' field fully populated with init_db_tables
+        CREATE PROCEDURE [dbo].[insertDeviceCount]( -- 'device_name' field fully populated with init_db_tables
         @a_placekey VARCHAR(max),
         @w_daterangestart VARCHAR(max),
         @am_devicetype VARCHAR(max),
@@ -429,8 +466,8 @@ def initialize_database_stored_procs():
 
         IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
         BEGIN
-        SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
-        SET @didout = (SELECT TOP 1 did FROM devices WHERE (device_name=@am_devicetype) ORDER BY did DESC);
+        SET @vidout = (SELECT vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart));	
+        SET @didout = (SELECT did FROM devices WHERE (device_name=@am_devicetype));
         INSERT INTO deviceLog(did, vid, user_count)
         VALUES (@didout, @vidout, @am_devicetype_cnt);
         END;
@@ -439,7 +476,7 @@ def initialize_database_stored_procs():
 	    ''')
 	
 	sql5=('''
-        ALTER PROCEDURE insertFootTrafficRecord(
+        CREATE PROCEDURE [dbo].[insertFootTrafficRecord](
         @a_placekey VARCHAR(max),
         @c_locationname VARCHAR(max),
         @e_brands VARCHAR(max),
@@ -477,7 +514,7 @@ def initialize_database_stored_procs():
 
         IF (SELECT COUNT(1) FROM naicsCodes WHERE naics_code=@h_naicscode)=1 
         BEGIN
-        SET @nidout=(SELECT nid FROM naicsCodes WHERE naics_code=@h_naicscode); --error: can't get past if there is same 
+        SET @nidout=(SELECT nid FROM naicsCodes WHERE naics_code=@h_naicscode);
         END;
         ELSE
         BEGIN
@@ -488,6 +525,10 @@ def initialize_database_stored_procs():
 
         IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1
         BEGIN
+        IF (SELECT nid FROM brandsInfo WHERE brand_name=@e_brands) IS NULL
+        BEGIN
+        UPDATE brandsInfo SET nid=@nidout WHERE brand_name=@e_brands;
+        END;
         SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@e_brands);
         END;
         ELSE
@@ -537,7 +578,7 @@ def initialize_database_stored_procs():
 	    ''')
 	
 	sql6=('''
-        ALTER PROCEDURE insertHomeVisits(
+        CREATE PROCEDURE [dbo].[insertHomeVisits](
         @a_placekey VARCHAR(max),
         @w_daterangestart VARCHAR(max),
         @ad_visitorhomecbg VARCHAR(max),
@@ -555,46 +596,60 @@ def initialize_database_stored_procs():
 
         IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg)=1
         BEGIN
-            SET @cbgidout=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg);
+        SET @cbgidout=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg);
         END;
 
         ELSE
         BEGIN
-            INSERT INTO censusBlockGroups(cbg_number)
-            VALUES (@ad_visitorhomecbg);
-            SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
+        INSERT INTO censusBlockGroups(cbg_number)
+        VALUES (@ad_visitorhomecbg);
+        SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
         END;
 
         IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
         BEGIN
-            SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
-            INSERT INTO homeVisits(locid, vid, cbgid, visit_count)
-            VALUES (@locidout, @vidout, @cbgidout, @ad_visitorhomecbg_cnt);
+        SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
+        INSERT INTO homeVisits(locid, vid, cbgid, visit_count)
+        VALUES (@locidout, @vidout, @cbgidout, @ad_visitorhomecbg_cnt);
         END;
         END;
         END;
 	    ''')
 	
 	sql7=('''
-        ALTER PROCEDURE insertWorkVisits(
+        CREATE PROCEDURE [dbo].[insertWorkVisits](
         @a_placekey VARCHAR(max),
         @w_daterangestart VARCHAR(max),
-        @af_visitordaytimecbg VARCHAR(max),
+        @af_visitordaytimecbg BIGINT,
         @af_visitordaytimecbg_cnt INT
         )
         AS
         BEGIN
         DECLARE @vidout INT;
         DECLARE @cbgidout INT;
+        DECLARE @locidout INT;
 
         BEGIN
+
+        SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey) 
+
+        IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@af_visitordaytimecbg)=1
+        BEGIN
+        SET @cbgidout=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@af_visitordaytimecbg);
+        END;
+
+        ELSE
+        BEGIN
+        INSERT INTO censusBlockGroups(cbg_number)
+        VALUES (@af_visitordaytimecbg);
+        SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
+        END;
 
         IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
         BEGIN
         SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
-        SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups  WHERE (cbg_number=@af_visitordaytimecbg) ORDER BY cbgid DESC);
-        INSERT INTO homeVisits(vid, cbgid, visit_count)
-        VALUES (@vidout, @cbgidout, @af_visitordaytimecbg_cnt);
+        INSERT INTO workVisits(locid, vid, cbgid, visit_count)
+        VALUES (@locidout, @vidout, @cbgidout, @af_visitordaytimecbg_cnt);
         END;
         END;
         END;
@@ -748,9 +803,9 @@ def poiRecordInsertion(file):
 def main():
     driver = '{SQL Server}'
     server = 'PDTTESQLDEV01'
-    db = 'Foot_Traffic'
-    user = 'FTStudent01;'
-    password = 'FTStudent01;'
+    db = 'Foot_Traffic' # blank database already created
+    user = ''
+    password = ''
 
     while True:
         time.sleep(.001)

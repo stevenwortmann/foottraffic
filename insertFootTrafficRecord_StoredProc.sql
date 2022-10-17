@@ -1,4 +1,4 @@
-ALTER PROCEDURE insertFootTrafficRecord(
+ALTER PROCEDURE [dbo].[insertFootTrafficRecord](
 	@a_placekey VARCHAR(max),
 	@c_locationname VARCHAR(max),
 	@e_brands VARCHAR(max),
@@ -36,7 +36,7 @@ DECLARE @vidout INT;
 
     IF (SELECT COUNT(1) FROM naicsCodes WHERE naics_code=@h_naicscode)=1 
       BEGIN
-        SET @nidout=(SELECT nid FROM naicsCodes WHERE naics_code=@h_naicscode); --error: can't get past if there is same 
+        SET @nidout=(SELECT nid FROM naicsCodes WHERE naics_code=@h_naicscode);
       END;
     ELSE
       BEGIN
