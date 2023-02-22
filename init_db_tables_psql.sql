@@ -4,16 +4,16 @@ DROP TABLE IF EXISTS brandsDay, brandsWeek, categoriesXref, categories, deviceLo
 	homeVisits, workVisits, visitsInfo, locationInfo, censusBlockGroups, brandsInfo, naicsCodes;
 
 CREATE TABLE naicsCodes (
-		nid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-		top_category VARCHAR(100) NOT NULL,
-		sub_category VARCHAR(100),
-		naics_code VARCHAR(20)
-		);
+    nid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    top_category VARCHAR(100) NOT NULL,
+    sub_category VARCHAR(100),
+    naics_code VARCHAR(20)
+    );
 
 CREATE TABLE brandsInfo (
 	bid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	nid INT REFERENCES naicsCodes (nid) ON DELETE CASCADE,
-	brand_name VARCHAR(100),
+	brand_name VARCHAR(100)
 	);
 
 CREATE TABLE censusBlockGroups (
@@ -82,13 +82,13 @@ CREATE TABLE deviceLog (
 
 CREATE TABLE categories (
 	cid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	category_name [varchar](max) NOT NULL,
+	category_name [varchar](max) NOT NULL
     );
 
 CREATE TABLE categoriesXref (
     cxid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	locid INT REFERENCES locationInfo (locid) ON DELETE CASCADE,
-	cid INT REFERENCES categoriesInfo (cid) ON DELETE CASCADE,
+	cid INT REFERENCES categoriesInfo (cid) ON DELETE CASCADE
     );
 
 CREATE TABLE brandsWeek (
