@@ -82,7 +82,7 @@ CREATE TABLE deviceLog (
 
 CREATE TABLE categories (
 	cid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	category_name [varchar](max) NOT NULL
+	category_name VARCHAR(100) NOT NULL
     );
 
 CREATE TABLE categoriesXref (
