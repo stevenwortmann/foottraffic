@@ -70,7 +70,7 @@ CREATE TABLE workVisits (
 
 CREATE TABLE devices (
     did INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    device_type VARCHAR(7) NOT NULL,
+    device_type VARCHAR(7) NOT NULL
     );
 
 CREATE TABLE deviceLog (
