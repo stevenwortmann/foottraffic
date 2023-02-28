@@ -76,6 +76,6 @@ BEGIN
   ELSE
     INSERT INTO visitsInfo(locid, week_begin, raw_visit_counts, raw_visitor_counts, distance_from_home, median_dwell, normalized_visits_by_state_scaling,
           normalized_visits_by_region_naics_visits, normalized_visits_by_region_naics_visitors, normalized_visits_by_total_visits, normalized_visits_by_total_visitors)
-        VALUES (@locidout, @w_daterangestart, @y_rawvisitcounts, @z_rawvisitorcounts, @ah_distancefromhome, @ai_mediumdwell, @an_normvisits_statescaling,
-          @ao_normvisits_regionnaicsvisits, @ap_normvisits_regionnaicsvisitors, @aq_normvisits_totalvisits, @ar_normvisits_totalvisitors);
+        VALUES (locidout, w_daterangestart, y_rawvisitcounts, z_rawvisitorcounts, ah_distancefromhome, ai_mediumdwell, an_normvisits_statescaling,
+          ao_normvisits_regionnaicsvisits, ap_normvisits_regionnaicsvisitors, aq_normvisits_totalvisits, ar_normvisits_totalvisitors);
     SELECT LASTVAL() INTO vidout;
