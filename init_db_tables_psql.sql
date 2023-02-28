@@ -1,6 +1,6 @@
 
 
-DROP TABLE IF EXISTS brandsDay, brandsWeek, categoriesXref, categories, deviceLog, devices,
+DROP TABLE IF EXISTS relatedBrands, categoriesXref, categories, deviceLog, devices,
 	homeVisits, workVisits, visitsInfo, locationInfo, censusBlockGroups, brandsInfo, naicsCodes;
 
 CREATE TABLE naicsCodes (
@@ -52,20 +52,13 @@ CREATE TABLE visitsInfo (
 	normalized_visits_by_total_visitors FLOAT NOT NULL
     );
 
-CREATE TABLE homeVisits (
-    hvid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+CREATE TABLE visitsType (
+    vtid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	locid INT REFERENCES locationInfo (locid) ON DELETE CASCADE,
 	vid INT REFERENCES visitsInfo (vid) ON DELETE CASCADE,
     cbgid INT REFERENCES censusBlockGroups (cbgid) ON DELETE CASCADE,
-	visit_count INT NOT NULL
-    );
-
-CREATE TABLE workVisits (
-    wvid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	locid INT REFERENCES locationInfo (locid) ON DELETE CASCADE,
-	vid INT REFERENCES visitsInfo (vid) ON DELETE CASCADE,
-    cbgid INT REFERENCES censusBlockGroups (cbgid) ON DELETE CASCADE,
-	visit_count INT NOT NULL
+	visit_count INT NOT NULL,
+    home_work_ind CHAR(1)
     );
 
 CREATE TABLE devices (
