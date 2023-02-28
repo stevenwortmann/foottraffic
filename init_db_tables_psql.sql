@@ -91,18 +91,12 @@ CREATE TABLE categoriesXref (
 	cid INT REFERENCES categoriesInfo (cid) ON DELETE CASCADE
     );
 
-CREATE TABLE brandsWeek (
-    bwid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    bid INT REFERENCES brandsInfo (bid) ON DELETE CASCADE,
-	vid INT REFERENCES visitsInfo (vid) ON DELETE CASCADE,
-	visit_count INT NOT NULL
-    );
-
-CREATE TABLE brandsDay (
+CREATE TABLE relatedBrands (
     blid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     bid INT REFERENCES brandsInfo (bid) ON DELETE CASCADE,
 	vid INT REFERENCES visitsInfo (vid) ON DELETE CASCADE,
-	visit_count INT NOT NULL
+	visit_count INT NOT NULL,
+    day_week_ind CHAR(1)
     );
 
 INSERT INTO devices (device_type) VALUES ('android');
