@@ -24,17 +24,19 @@ CREATE OR REPLACE PROCEDURE insertFootTrafficRecord(
     aq_normvisits_totalvisits FLOAT,
     ar_normvisits_totalvisitors FLOAT
 )
+
 LANGUAGE plpgsql
 AS $$
+
 DECLARE
   nidout INT;
   bidout INT;
   cbgidout INT;
   locidout INT;
   vidout INT;
+
 BEGIN
-  IF EXISTS (SELECT 1 FROM naicsCodes WHERE naics_code=h_naicscode)
-  THEN
+  IF EXISTS (SELECT 1 FROM naicsCodes WHERE naics_code=h_naicscode) THEN
     SELECT nid INTO nidout FROM naicsCodes WHERE naics_code=h_naicscode;
   ELSE
     INSERT INTO naicsCodes (naics_code, top_category, sub_category)
@@ -42,10 +44,8 @@ BEGIN
     SELECT LASTVAL() INTO nidout;
   END IF;
 
-  IF EXISTS (SELECT 1 FROM brandsInfo WHERE brand_name=e_brands)
-  THEN
-    IF (SELECT nid FROM brandsInfo WHERE brand_name=e_brands) IS NULL
-    THEN
+  IF EXISTS (SELECT 1 FROM brandsInfo WHERE brand_name=e_brands) THEN
+    IF (SELECT nid FROM brandsInfo WHERE brand_name=e_brands) IS NULL THEN
       UPDATE brandsInfo SET nid=nidout WHERE brand_name=e_brands;
     END IF;
     SELECT bid INTO bidout FROM brandsInfo WHERE brand_name=e_brands;
@@ -55,8 +55,7 @@ BEGIN
     SELECT LASTVAL() INTO bidout;
   END IF;
 
-  IF EXISTS (SELECT 1 FROM censusBlockGroups WHERE cbg_number=ac_poicbg)
-  THEN
+  IF EXISTS (SELECT 1 FROM censusBlockGroups WHERE cbg_number=ac_poicbg) THEN
     SELECT cbgid INTO cbgidout FROM censusBlockGroups WHERE cbg_number=ac_poicbg;
   ELSE
     INSERT INTO censusBlockGroups (cbg_number)
@@ -64,13 +63,7 @@ BEGIN
     SELECT LASTVAL() INTO cbgidout;
   END IF;
 
-
-
-
-
-
-  IF EXISTS (SELECT 1 FROM locationInfo WHERE placekey=a_placekey)
-  THEN
+  IF EXISTS (SELECT 1 FROM locationInfo WHERE placekey=a_placekey) THEN
     SELECT locid INTO locidout FROM locationInfo WHERE placekey=a_placekey;
   ELSE
     INSERT INTO locationInfo (nid, bid, cbgid, placekey, location_name, latitude, longitude, street_address, city, region, postal_code, phone_number)
@@ -78,8 +71,7 @@ BEGIN
     SELECT LASTVAL() INTO locidout;
   END IF;
 
-  IF EXISTS (SELECT 1 FROM visitsInfo WHERE locid=locidout AND week_begin=w_daterangestart)
-  THEN
+  IF EXISTS (SELECT 1 FROM visitsInfo WHERE locid=locidout AND week_begin=w_daterangestart) THEN
     SELECT vid INTO vidout FROM visitsInfo WHERE (locid=locidout AND week_begin=w_daterangestart);
   ELSE
     INSERT INTO visitsInfo(locid, week_begin, raw_visit_counts, raw_visitor_counts, distance_from_home, median_dwell, normalized_visits_by_state_scaling,
