@@ -12,7 +12,6 @@ AS $$
 DECLARE 
     vidout INT;
     bidout INT;
-    locidout INT;
 
 BEGIN
     IF EXISTS (SELECT 1 FROM brandsInfo WHERE brand_name=ak_relatedsameweekbrand)
