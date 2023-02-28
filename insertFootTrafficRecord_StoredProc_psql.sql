@@ -44,11 +44,15 @@ BEGIN
 
   IF EXISTS (SELECT 1 FROM brandsInfo WHERE brand_name=e_brands)
   THEN
+    IF (SELECT nid FROM brandsInfo WHERE brand_name=e_brands) IS NULL
+    THEN
+      UPDATE brandsInfo SET nid=nidout WHERE brand_name=e_brands;
+    END IF;
     SELECT bid INTO bidout FROM brandsInfo WHERE brand_name=e_brands;
   ELSE
     INSERT INTO brandsInfo (nid, brand_name)
         VALUES (nidout, e_brands);
-    SELECT bid INTO bidout FROM brandsInfo ORDER BY bid DESC LIMIT 1;
+    SELECT LASTVAL() INTO bidout;
   END IF;
 
   IF EXISTS (SELECT 1 FROM censusBlockGroups WHERE cbg_number=ac_poicbg)
@@ -59,6 +63,11 @@ BEGIN
         VALUES (ac_poicbg);
     SELECT LASTVAL() INTO cbgidout;
   END IF;
+
+
+
+
+
 
   IF EXISTS (SELECT 1 FROM locationInfo WHERE placekey=a_placekey)
   THEN
