@@ -1,6 +1,6 @@
 CREATE OR REPLACE PROCEDURE insertBrandsDay(
     a_placekey VARCHAR,
-    w_daterangestart VARCHAR,
+    w_daterangestart DATE,
     ak_relatedsamedaybrand VARCHAR,
     ak_relatedsamedaybrand_cnt INT,
     day_week_ind CHAR
