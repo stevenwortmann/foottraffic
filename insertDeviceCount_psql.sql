@@ -11,7 +11,7 @@ DECLARE vidout INT;
 
 BEGIN
 
-  IF (SELECT COUNT(*) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=a_placekey AND v.week_begin=w_daterangestart))=1 
+  IF (SELECT 1 FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=a_placekey AND v.week_begin=w_daterangestart))
     THEN
         SELECT vid INTO vidout FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=a_placekey AND v.week_begin=w_daterangestart);
         SELECT did INTO didout FROM devices WHERE (device_name=am_devicetype);
