@@ -18,7 +18,7 @@ CREATE TABLE brandsInfo (
 
 CREATE TABLE censusBlockGroups (
 	cbgid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	cbg_number VARCHAR(8) NOT NULL
+	cbg_number VARCHAR(12) NOT NULL
 	);
 
 CREATE TABLE locationInfo (
