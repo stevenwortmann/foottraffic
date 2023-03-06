@@ -2,9 +2,9 @@ import psycopg2
 import pandas as pd
 import os
 
-def create_database(database_name, db_user, db_password):
+def create_database(database_name, db_user, db_password, tablespace_name, tablespace_location):
     """
-    Connects to PostgreSQL server and creates a database.
+    Connects to PostgreSQL server and creates a database with a user-defined tablespace.
     """
     try:
         conn = psycopg2.connect(
@@ -15,12 +15,32 @@ def create_database(database_name, db_user, db_password):
         )
         conn.set_session(autocommit=True)
         cur = conn.cursor()
-        cur.execute(f"CREATE DATABASE {database_name}")
+
+        # Check if tablespace exists at the specified location
+        cur.execute(f"SELECT oid FROM pg_tablespace WHERE spcname = '{tablespace_name}'")
+        result = cur.fetchone()
+        if result is not None:
+            print("Tablespace already exists.")
+        else:
+            cur.execute(f"CREATE TABLESPACE {tablespace_name} LOCATION '{tablespace_location}';")
+            conn.commit()
+            print("Tablespace created successfully.")
+
+        # Check if database already exists
+        cur.execute(f"SELECT 1 FROM pg_database WHERE datname = '{database_name}'")
+        result = cur.fetchone()
+        if result is not None:
+            print("Database already exists.")
+        else:
+            cur.execute(f"CREATE DATABASE {database_name} TABLESPACE {tablespace_name}")
+            conn.commit()
+            print("Database created successfully.")
+
         cur.close()
         conn.close()
-        print("Database created successfully.")
     except Exception as e:
         print(f"Error creating database: {e}")
+
 
 def create_tables(db_name, db_user, db_password, sql_file_path):
     """
@@ -81,10 +101,15 @@ def insert_data(db_name, db_user, db_password, directory_path):
             if file.endswith(".csv"):
                 file_path = os.path.join(directory_path, file)
                 df = pd.read_csv(file_path)
-                table_name = file.split(".")[0]
-                df.to_sql(table_name, conn, if_exists='append', index=False)
+ #               table_name = file.split(".")[0]
+ #               df.to_sql(table_name, conn, if_exists='append', index=False)
         cur.close()
         conn.close()
         print("Data inserted successfully.")
     except Exception as e:
         print(f"Error inserting data: {e}")
+
+def main():
+    create_database(database_name, db_user, db_password)
+    create_stored_procedures(db_name, db_user, db_password, sql_file_path)
+    
