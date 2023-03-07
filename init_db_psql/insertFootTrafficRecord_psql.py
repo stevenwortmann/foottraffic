@@ -110,6 +110,6 @@ def insert_data(db_name, db_user, db_password, directory_path):
         print(f"Error inserting data: {e}")
 
 def main():
-    create_database(database_name, db_user, db_password)
-    create_stored_procedures(db_name, db_user, db_password, sql_file_path)
+    create_database(database_name, db_user, db_password, tablespace_name, tablespace_location)
+    create_tables(db_name, db_user, db_password, sql_file_path)
     
