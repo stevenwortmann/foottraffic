@@ -65,6 +65,19 @@ def add_to_visitsInfo(row, visitsInfo, locid):
     else:
         return existing_row.index[0]
 
+# Define a function to add a new 'home' record to the visitsType dataframe if it doesn't already exist
+def add_to_visitsType_home(locid, vid, cbgid_loc, cbg_h, cbg_h_count, visitsType, censusBlockGroups):
+    cbgid_h = add_to_censusBlockGroups(cbg_h, censusBlockGroups) # fetch origin cbgid from censusBlockGroups, or create new cbgid
+    existing_row = visitsType.loc[(visitsType['vid'] == vid) &
+                                  (visitsType['cbgid_orig'] == cbgid_h) &
+                                  (visitsType['cbgid_loc'] == cbgid_loc)]
+    if existing_row.empty:
+        vtid = get_next_pk(visitsType)
+        visitsType.loc[vtid] = [locid, vid, cbgid_loc, cbgid_h, cbg_h_count, 'h']
+        return vtid
+    else:
+        return existing_row.index[0]
+
 raw_columns = {
     'placekey': str,
     'location_name': str,
