@@ -78,6 +78,19 @@ def add_to_visitsType_home(locid, vid, cbgid_loc, cbg_h, cbg_h_count, visitsType
     else:
         return existing_row.index[0]
 
+# Define a function to add a new 'work' record to the visitsType dataframe if it doesn't already exist
+def add_to_visitsType_work(locid, vid, cbgid_loc, cbg_w, cbg_w_count, visitsType, censusBlockGroups):
+    cbgid_w = add_to_censusBlockGroups(cbg_w, censusBlockGroups) # fetch origin cbgid from censusBlockGroups, or create new cbgid
+    existing_row = visitsType.loc[(visitsType['vid'] == vid) &
+                                  (visitsType['cbgid_orig'] == cbgid_w) &
+                                  (visitsType['cbgid_loc'] == cbgid_loc)]
+    if existing_row.empty:
+        vtid = get_next_pk(visitsType)
+        visitsType.loc[vtid] = [locid, vid, cbgid_loc, cbgid_w, cbg_w_count, 'w']
+        return vtid
+    else:
+        return existing_row.index[0]
+
 raw_columns = {
     'placekey': str,
     'location_name': str,
@@ -122,8 +135,23 @@ for col in df.columns:
         df[col] = df[col].str.rstrip('.0')
 
 # Iterate over each row in the raw csv and update the dataframes accordingly
-for index, row in filename.iterrows():
+for index, row in df.iterrows():
     nid = add_to_naicsCodes(row, naicsCodes)
     bid = add_to_brandsInfo(row, brandsInfo, nid)
-    cbgid = add_to_censusBlockGroups(row, censusBlockGroups)
-    add_to_locationInfo(row, locationInfo, naicsCodes, brandsInfo, censusBlockGroups)
+    cbgid = add_to_censusBlockGroups(row['poi_cbg'], censusBlockGroups)
+    locid = add_to_locationInfo(row, locationInfo, nid, bid, cbgid)
+    vid = add_to_visitsInfo(row, visitsInfo, locid)
+    for x in row.visitor_home_cbgs.split(','):
+            if x!= "{}":
+                x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+                if (x[0][0]).isalpha() is True:
+                    pass # exclude non-US districts/blocks
+                else:
+                     add_to_visitsType_home(locid, vid, cbgid, x[0], x[1], visitsType, censusBlockGroups)
+    for x in row.visitor_daytime_cbgs.split(','):
+            if x!= "{}":
+                x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+                if (x[0][0]).isalpha() is True:
+                    pass # exclude non-US districts/blocks
+                else:
+                     add_to_visitsType_work(locid, vid, cbgid, x[0], x[1], visitsType, censusBlockGroups)
