@@ -10,15 +10,17 @@ censusBlockGroups = pd.DataFrame(columns=['cbgid', 'cbg_number']).set_index('cbg
 locationInfo = pd.DataFrame(columns=['locid', 'nid', 'bid', 'cbgid', 'placekey', 'location_name',
                                      'latitude', 'longitude', 'street_address', 'city', 'region', 'postal_code', 'phone_number']).set_index('locid')
 
-visitsInfo = pd.DataFrame(columns=['vid', 'locid', 'week_begin', 'raw_visit_counts', 'raw_visitor_counts', 'distance_from_home',
+visitsInfo = pd.DataFrame(columns=['vid', 'locid', 'week_begin', 'raw_visit_count', 'raw_visitor_count', 'distance_from_home',
                                    'median_dwell', 'normalized_visits_by_state_scaling', 'normalized_visits_by_region_naics_visits',
                                    'normalized_visits_by_region_naics_visitors', 'normalized_visits_by_total_visits',
                                    'normalized_visits_by_total_visitors']).set_index('vid')
+visitsInfo['week_begin'] = pd.to_datetime(visitsInfo['week_begin'].str.slice(stop=10), format='%Y-%m-%d')
 
-visitsType = pd.DataFrame(columns=['vtid', 'locid', 'vid', 'cbgid', 'visit_count', 'home_work_ind']).set_index('vtid')
+visitsType = pd.DataFrame(columns=['vtid', 'locid', 'vid', 'cbgid_loc', 'cbgid_orig', 'visit_count', 'home_work_ind']).set_index('vtid')
 
 devices = pd.DataFrame({'did': [1, 2],
                         'device_type': ['android', 'ios']}).set_index('did')
+
 
 deviceLog = pd.DataFrame(columns=['dlid', 'vid', 'did', 'user_count']).set_index('dlid')
 
