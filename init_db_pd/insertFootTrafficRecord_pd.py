@@ -99,12 +99,14 @@ raw_columns = {
 }
 
 df = pd.read_csv(r"path\to\csv_file.csv",
-                 usecols=list(raw_columns.keys()), dtype=raw_columns
+                 usecols=list(raw_columns.keys()), dtype=raw_columns, nrows=50
                  ).dropna(subset=['date_range_start'])
 
 df['date_range_start'] = pd.to_datetime(df['date_range_start'].str.slice(stop=10), format='%Y-%m-%d')
-df['naics_code'] = df['naics_code'].str[:-2]
-df['poi_cbg'] = df['poi_cbg'].str[:-2]
+
+for col in df.columns:
+    if df[col].dtype == 'object':  # check if column contains strings
+        df[col] = df[col].str.rstrip('.0')
 
 # Iterate over each row in the raw csv and update the dataframes accordingly
 for index, row in filename.iterrows():
