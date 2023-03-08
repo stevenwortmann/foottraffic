@@ -46,8 +46,24 @@ def add_to_locationInfo(row, locationInfo, nid, bid, cbgid):
     if existing_row.empty:
         locid = get_next_pk(locationInfo)
         locationInfo.loc[locid] = [nid, bid, cbgid, row['placekey'], row['location_name'], row['latitude'],
-                                                       row['longitude'], row['street_address'], row['city'],
-                                                       row['region'], row['postal_code'], row['phone_number']]
+                                    row['longitude'], row['street_address'], row['city'], row['region'], row['postal_code'], row['phone_number']]
+        return locid
+    else:
+        return existing_row.index[0]
+
+# Define a function to add a new record to the visitsInfo dataframe if it doesn't already exist
+def add_to_visitsInfo(row, visitsInfo, locid):
+    existing_row = visitsInfo.loc[(visitsInfo['locid'] == locid) &
+                                  (visitsInfo['week_begin'] == row['date_range_start'])]
+    if existing_row.empty:
+        vid = get_next_pk(visitsInfo)
+        visitsInfo.loc[vid] = [locid, row['date_range_start'], row['raw_visit_counts'], row['raw_visitor_counts'], row['distance_from_home'],
+                                   row['median_dwell'], row['normalized_visits_by_state_scaling'], row['normalized_visits_by_region_naics_visits'],
+                                   row['normalized_visits_by_region_naics_visitors'], row['normalized_visits_by_total_visits'],
+                                   row['normalized_visits_by_total_visitors']]
+        return vid
+    else:
+        return existing_row.index[0]
 
 raw_columns = {
     'placekey': str,
