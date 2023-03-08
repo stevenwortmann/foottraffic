@@ -1,3 +1,5 @@
+import pandas as pd
+
 # Define a function to get the next available primary key for a given dataframe
 def get_next_pk(df):
     if df.empty:
@@ -91,6 +93,27 @@ def add_to_visitsType_work(locid, vid, cbgid_loc, cbg_w, cbg_w_count, visitsType
     else:
         return existing_row.index[0]
 
+# Define a function to add a new record to the categories dataframe if it doesn't already exist
+def add_to_categories(category_name, categories):
+    existing_row = categories.loc[categories['category_name'] == category_name]
+    if existing_row.empty:
+        cid = get_next_pk(categories)
+        categories.loc[cid] = category_name
+        return cid
+    else:
+        return existing_row.index[0]
+
+# Define a function to add a new record to the categoriesXref dataframe if it doesn't already exist
+def add_to_categoriesXref(locid, cid, categoriesXref):
+    existing_row = categoriesXref.loc[(categoriesXref['locid'] == locid) &
+                                      (categoriesXref['cid'] == cid)]
+    if existing_row.empty:
+        cxid = get_next_pk(categoriesXref)
+        categoriesXref.loc[cxid] = [locid, cid]
+        return cxid
+    else:
+        return existing_row.index[0]
+
 raw_columns = {
     'placekey': str,
     'location_name': str,
@@ -142,16 +165,21 @@ for index, row in df.iterrows():
     locid = add_to_locationInfo(row, locationInfo, nid, bid, cbgid)
     vid = add_to_visitsInfo(row, visitsInfo, locid)
     for x in row.visitor_home_cbgs.split(','):
-            if x!= "{}":
+            if x != "{}":
                 x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
                 if (x[0][0]).isalpha() is True:
                     pass # exclude non-US districts/blocks
                 else:
                      add_to_visitsType_home(locid, vid, cbgid, x[0], x[1], visitsType, censusBlockGroups)
     for x in row.visitor_daytime_cbgs.split(','):
-            if x!= "{}":
+            if x != "{}":
                 x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
                 if (x[0][0]).isalpha() is True:
                     pass # exclude non-US districts/blocks
                 else:
                      add_to_visitsType_work(locid, vid, cbgid, x[0], x[1], visitsType, censusBlockGroups)
+    if pd.isna(row['category_tags']):
+        continue
+    for x in row.category_tags.split(','):
+        cid = add_to_categories(x, categories)
+        add_to_categoriesXref(locid, cid, categoriesXref)
