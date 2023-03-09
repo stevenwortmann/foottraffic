@@ -113,6 +113,17 @@ def add_to_categoriesXref(locid, cid, categoriesXref):
         return cxid
     else:
         return existing_row.index[0]
+    
+def add_to_relatedBrands_day(vid, brand_name, visit_count, relatedBrands, brandsInfo):
+    bid = add_to_brandsInfo(brand_name, brandsInfo, None) # fetch brand id from brandsInfo, or create new brand id (naics id will be null in this case)
+    existing_row = relatedBrands.loc[(relatedBrands['vid'] == vid) &
+                                  (relatedBrands['bid'] == bid)]
+    if existing_row.empty:
+        blid = get_next_pk(relatedBrands)
+        relatedBrands.loc[blid] = [bid, vid, visit_count, 'd']
+        return blid
+    else:
+        return existing_row.index[0]
 
 raw_columns = {
     'placekey': str,
@@ -160,7 +171,7 @@ for col in df.columns:
 # Iterate over each row in the raw csv and update the dataframes accordingly
 for index, row in df.iterrows():
     nid = add_to_naicsCodes(row, naicsCodes)
-    bid = add_to_brandsInfo(row, brandsInfo, nid)
+    bid = add_to_brandsInfo(row['brands'], brandsInfo, nid)
     cbgid = add_to_censusBlockGroups(row['poi_cbg'], censusBlockGroups)
     locid = add_to_locationInfo(row, locationInfo, nid, bid, cbgid)
     vid = add_to_visitsInfo(row, visitsInfo, locid)
@@ -183,3 +194,6 @@ for index, row in df.iterrows():
     for x in row.category_tags.split(','):
         cid = add_to_categories(x, categories)
         add_to_categoriesXref(locid, cid, categoriesXref)
+    for x in row.related_same_day_brand.split(','):
+         x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+         add_to_relatedBrands_day(vid, x[0], x[1], relatedBrands, brandsInfo)
