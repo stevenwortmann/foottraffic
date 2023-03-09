@@ -202,36 +202,46 @@ for col in df.columns:
 
 # Iterate over each row in the raw csv and update the dataframes accordingly
 for index, row in df.iterrows():
+
     nid = add_to_naicsCodes(row, naicsCodes)
     bid = add_to_brandsInfo(row['brands'], brandsInfo, nid)
     cbgid = add_to_censusBlockGroups(row['poi_cbg'], censusBlockGroups)
     locid = add_to_locationInfo(row, locationInfo, nid, bid, cbgid)
     vid = add_to_visitsInfo(row, visitsInfo, locid)
+
     for x in row.visitor_home_cbgs.split(','):
             if x != "{}":
                 x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-                if (x[0][0]).isalpha() is True:
-                    pass # exclude non-US districts/blocks
-                else:
-                     add_to_visitsType_home(locid, vid, cbgid, x[0], x[1], visitsType, censusBlockGroups)
+            if (x[0][0]).isalpha() is True:
+                pass # exclude non-US districts/blocks
+            else:
+                add_to_visitsType_home(locid, vid, cbgid, x[0], x[1], visitsType, censusBlockGroups)
+
     for x in row.visitor_daytime_cbgs.split(','):
             if x != "{}":
                 x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-                if (x[0][0]).isalpha() is True:
-                    pass # exclude non-US districts/blocks
-                else:
-                     add_to_visitsType_work(locid, vid, cbgid, x[0], x[1], visitsType, censusBlockGroups)
-    if pd.isna(row['category_tags']):
-        continue
-    for x in row.category_tags.split(','):
-        cid = add_to_categories(x, categories)
-        add_to_categoriesXref(locid, cid, categoriesXref)
+            if (x[0][0]).isalpha() is True:
+                pass # exclude non-US districts/blocks
+            else:
+                add_to_visitsType_work(locid, vid, cbgid, x[0], x[1], visitsType, censusBlockGroups)
+
     for x in row.related_same_day_brand.split(','):
-         x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-         add_to_relatedBrands_day(vid, x[0], x[1], relatedBrands, brandsInfo)
+        if x.strip(): # check if x is not an empty string after stripping whitespace
+            x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+            if len(x) == 2:
+                add_to_relatedBrands_day(vid, x[0], x[1], relatedBrands, brandsInfo)
+
     for x in row.related_same_week_brand.split(','):
-         x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-         add_to_relatedBrands_week(vid, x[0], x[1], relatedBrands, brandsInfo)
+        if x.strip(): # check if x is not an empty string after stripping whitespace
+            x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+            if len(x) == 2:
+                add_to_relatedBrands_week(vid, x[0], x[1], relatedBrands, brandsInfo)
+
     for x in row.device_type.split(','):
         x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
         add_to_deviceLog(vid, x[0], x[1], devices)
+
+    if not pd.isna(row['category_tags']):
+        for x in row.category_tags.split(','):
+            cid = add_to_categories(x, categories)
+            add_to_categoriesXref(locid, cid, categoriesXref)
