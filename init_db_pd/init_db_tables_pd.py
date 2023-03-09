@@ -18,9 +18,7 @@ visitsInfo['week_begin'] = pd.to_datetime(visitsInfo['week_begin'].str.slice(sto
 
 visitsType = pd.DataFrame(columns=['vtid', 'locid', 'vid', 'cbgid_loc', 'cbgid_orig', 'visit_count', 'home_work_ind']).set_index('vtid')
 
-devices = pd.DataFrame({'did': [1, 2],
-                        'device_type': ['android', 'ios']}).set_index('did')
-
+devices = pd.DataFrame({'did': [1, 2], 'device_type': ['android', 'ios']}).set_index('did')
 
 deviceLog = pd.DataFrame(columns=['dlid', 'vid', 'did', 'user_count']).set_index('dlid')
 
@@ -28,4 +26,4 @@ categories = pd.DataFrame(columns=['cid', 'category_name']).set_index('cid')
 
 categoriesXref = pd.DataFrame(columns=['cxid', 'locid', 'cid']).set_index('cxid')
 
-relatedBrands = pd.DataFrame(columns=['blid', 'bid', 'vid', 'visit_count', 'day_week_ind']).set_index('blid')
+relatedBrands = pd.DataFrame(columns=['rbid', 'bid', 'vid', 'visit_count', 'day_week_ind']).set_index('rbid')
