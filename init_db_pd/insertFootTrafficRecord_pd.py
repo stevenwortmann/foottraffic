@@ -124,6 +124,17 @@ def add_to_relatedBrands_day(vid, brand_name, visit_count, relatedBrands, brands
         return blid
     else:
         return existing_row.index[0]
+    
+def add_to_relatedBrands_week(vid, brand_name, visit_count, relatedBrands, brandsInfo):
+    bid = add_to_brandsInfo(brand_name, brandsInfo, None) # fetch brand id from brandsInfo, or create new brand id (naics id will be null in this case)
+    existing_row = relatedBrands.loc[(relatedBrands['vid'] == vid) &
+                                  (relatedBrands['bid'] == bid)]
+    if existing_row.empty:
+        rbid = get_next_pk(relatedBrands)
+        relatedBrands.loc[rbid] = [bid, vid, visit_count, 'w']
+        return rbid
+    else:
+        return existing_row.index[0]
 
 raw_columns = {
     'placekey': str,
@@ -197,3 +208,6 @@ for index, row in df.iterrows():
     for x in row.related_same_day_brand.split(','):
          x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
          add_to_relatedBrands_day(vid, x[0], x[1], relatedBrands, brandsInfo)
+    for x in row.related_same_week_brand.split(','):
+         x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+         add_to_relatedBrands_week(vid, x[0], x[1], relatedBrands, brandsInfo)
