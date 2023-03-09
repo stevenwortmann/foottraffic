@@ -33,11 +33,11 @@ def add_to_brandsInfo(row, brandsInfo, nid):
             return None
 
 # Define a function to add a new record to the censusBlockGroups dataframe if it doesn't already exist
-def add_to_censusBlockGroups(row, censusBlockGroups):
-    existing_row = censusBlockGroups.loc[censusBlockGroups['cbg_number'] == row['poi_cbg']]
+def add_to_censusBlockGroups(poi_cbg, censusBlockGroups):
+    existing_row = censusBlockGroups.loc[censusBlockGroups['cbg_number'] == poi_cbg]
     if existing_row.empty:
         cbgid = get_next_pk(censusBlockGroups)
-        censusBlockGroups.loc[cbgid] = [row['poi_cbg']]
+        censusBlockGroups.loc[cbgid] = poi_cbg
         return cbgid
     else:
         return existing_row.index[0]
