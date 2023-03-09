@@ -135,6 +135,23 @@ def add_to_relatedBrands_week(vid, brand_name, visit_count, relatedBrands, brand
         return rbid
     else:
         return existing_row.index[0]
+    
+def add_to_deviceLog(vid, device_name, device_count, devices):
+    did = devices.loc[devices['device_type'] == device_name]
+    if did.empty: # new non-ios/android device
+        new_did = get_next_pk(devices)
+        devices.loc[new_did] = device_name
+        did = new_did
+    else:
+        did = did.index[0]
+    existing_row = deviceLog.loc[(deviceLog['did'] == did) &
+                                 (deviceLog['vid'] == vid)]
+    if existing_row.empty:
+        dlid = get_next_pk(deviceLog)
+        deviceLog.loc[dlid] = [vid, did, device_count]
+        return dlid
+    else:
+        return existing_row.index[0]
 
 raw_columns = {
     'placekey': str,
@@ -211,3 +228,6 @@ for index, row in df.iterrows():
     for x in row.related_same_week_brand.split(','):
          x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
          add_to_relatedBrands_week(vid, x[0], x[1], relatedBrands, brandsInfo)
+    for x in row.device_type.split(','):
+        x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
+        add_to_deviceLog(vid, x[0], x[1], devices)
