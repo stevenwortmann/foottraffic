@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 
 # Define a function to get the next available primary key for a given dataframe
 def get_next_pk(df):
@@ -209,33 +210,17 @@ for index, row in df.iterrows():
     locid = add_to_locationInfo(row, locationInfo, nid, bid, cbgid)
     vid = add_to_visitsInfo(row, visitsInfo, locid)
 
-    for x in row.visitor_home_cbgs.split(','):
-            if x != "{}":
-                x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-            if (x[0][0]).isalpha() is True:
-                pass # exclude non-US districts/blocks
-            else:
-                add_to_visitsType_home(locid, vid, cbgid, x[0], x[1], visitsType, censusBlockGroups)
+    for key, value in json.loads(row.visitor_home_cbgs).items():
+        add_to_visitsType_home(locid, vid, cbgid, key, value, visitsType, censusBlockGroups)
 
-    for x in row.visitor_daytime_cbgs.split(','):
-            if x != "{}":
-                x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-            if (x[0][0]).isalpha() is True:
-                pass # exclude non-US districts/blocks
-            else:
-                add_to_visitsType_work(locid, vid, cbgid, x[0], x[1], visitsType, censusBlockGroups)
+    for key, value in json.loads(row.visitor_daytime_cbgs).items():
+        add_to_visitsType_work(locid, vid, cbgid, key, value, visitsType, censusBlockGroups)
 
-    for x in row.related_same_day_brand.split(','):
-        if x.strip(): # check if x is not an empty string after stripping whitespace
-            x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-            if len(x) == 2:
-                add_to_relatedBrands_day(vid, x[0], x[1], relatedBrands, brandsInfo)
+    for key, value in json.loads(row.related_same_day_brand).items():
+        add_to_relatedBrands_day(vid, key, value, relatedBrands, brandsInfo)
 
-    for x in row.related_same_week_brand.split(','):
-        if x.strip(): # check if x is not an empty string after stripping whitespace
-            x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-            if len(x) == 2:
-                add_to_relatedBrands_week(vid, x[0], x[1], relatedBrands, brandsInfo)
+    for key, value in json.loads(row.related_same_week_brand).items():
+        add_to_relatedBrands_week(vid, key, value, relatedBrands, brandsInfo)
 
     for x in row.device_type.split(','):
         x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
