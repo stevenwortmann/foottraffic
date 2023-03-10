@@ -222,9 +222,8 @@ for index, row in df.iterrows():
     for key, value in json.loads(row.related_same_week_brand).items():
         add_to_relatedBrands_week(vid, key, value, relatedBrands, brandsInfo)
 
-    for x in row.device_type.split(','):
-        x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-        add_to_deviceLog(vid, x[0], x[1], devices)
+    for key, value in json.loads(row.device_type).items():
+        add_to_deviceLog(vid, key, value, devices)
 
     if not pd.isna(row['category_tags']):
         for x in row.category_tags.split(','):
