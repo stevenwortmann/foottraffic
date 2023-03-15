@@ -111,7 +111,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[devices](
 	[did] [int] IDENTITY(1,1) NOT NULL,
-	[device_name] [varchar](max) NOT NULL,
+	[device_name] [varchar](10) NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[did] ASC
@@ -128,15 +128,15 @@ CREATE TABLE [dbo].[locationInfo](
 	[nid] [int] NULL,
 	[bid] [int] NULL,
 	[cbgid] [int] NULL,
-	[placekey] [varchar](max) NULL,
-	[location_name] [varchar](max) NULL,
+	[placekey] [varchar](19) NOT NULL,
+	[location_name] [varchar](max) NOT NULL,
 	[latitude] [float] NULL,
 	[longitude] [float] NULL,
-	[street_address] [varchar](max) NULL,
-	[city] [varchar](max) NULL,
-	[region] [varchar](max) NULL,
-	[postal_code] [int] NULL,
-	[phone_number] [bigint] NULL,
+	[street_address] [varchar](max) NOT NULL,
+	[city] [varchar](max) NOT NULL,
+	[region] [char](5) NOT NULL,
+	[postal_code] [varchar](5) NOT NULL,
+	[phone_number] [varchar](15) NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[locid] ASC
@@ -150,7 +150,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[naicsCodes](
 	[nid] [int] IDENTITY(1,1) NOT NULL,
-	[naics_code] [int] NOT NULL,
+	[naics_code] [varchar](10) NOT NULL,
 	[top_category] [varchar](max) NOT NULL,
 	[sub_category] [varchar](max) NULL,
 PRIMARY KEY CLUSTERED 
@@ -192,8 +192,8 @@ CREATE TABLE [dbo].[visitsType](
 	[vtid] [int] IDENTITY(1,1) NOT NULL,
 	[locid] [int] NOT NULL,
 	[vid] [int] NOT NULL,
-	[cbgid_loc] [int] NOT NULL,
-	[cbgid_orig] [int] NOT NULL,
+	[cbgid_loc] [varchar](15) NOT NULL,
+	[cbgid_orig] [varchar](15) NOT NULL,
 	[visit_count] [int] NOT NULL,
 	[home_work_ind] [char](1) NOT NULL,
 PRIMARY KEY CLUSTERED 
