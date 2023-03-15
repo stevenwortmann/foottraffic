@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS[dbo].[categories]
 DROP TABLE IF EXISTS[dbo].[deviceLog]
 DROP TABLE IF EXISTS[dbo].[devices]
 DROP TABLE IF EXISTS[dbo].[homeVisits]
-DROP TABLE IF EXISTS[dbo].[workVisits]
+DROP TABLE IF EXISTS[dbo].[visitsType]
 DROP TABLE IF EXISTS[dbo].[visitsInfo]
 DROP TABLE IF EXISTS[dbo].[locationInfo]
 DROP TABLE IF EXISTS[dbo].[censusBlockGroups]
@@ -135,23 +135,6 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[homeVisits]    Script Date: 10/17/2022 3:40:25 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[homeVisits](
-	[hvid] [int] IDENTITY(1,1) NOT NULL,
-	[locid] [int] NOT NULL,
-	[vid] [int] NOT NULL,
-	[cbgid] [int] NOT NULL,
-	[visit_count] [int] NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[hvid] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
 /****** Object:  Table [dbo].[locationInfo]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
@@ -217,17 +200,18 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[workVisits]    Script Date: 10/17/2022 3:40:25 PM ******/
+/****** Object:  Table [dbo].[visitsType]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[workVisits](
-	[wvid] [int] IDENTITY(1,1) NOT NULL,
+CREATE TABLE [dbo].[visitsType](
+	[vtid] [int] IDENTITY(1,1) NOT NULL,
 	[locid] [int] NOT NULL,
 	[vid] [int] NOT NULL,
 	[cbgid] [int] NOT NULL,
 	[visit_count] [int] NOT NULL,
+	[home_work_ind] [char] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[wvid] ASC
@@ -289,21 +273,6 @@ REFERENCES [dbo].[visitsInfo] ([vid])
 GO
 ALTER TABLE [dbo].[deviceLog] CHECK CONSTRAINT [FK_deviceLog.vid]
 GO
-ALTER TABLE [dbo].[homeVisits]  WITH CHECK ADD  CONSTRAINT [FK_homeVisits.cbgid] FOREIGN KEY([cbgid])
-REFERENCES [dbo].[censusBlockGroups] ([cbgid])
-GO
-ALTER TABLE [dbo].[homeVisits] CHECK CONSTRAINT [FK_homeVisits.cbgid]
-GO
-ALTER TABLE [dbo].[homeVisits]  WITH CHECK ADD  CONSTRAINT [FK_homeVisits.locid] FOREIGN KEY([locid])
-REFERENCES [dbo].[locationInfo] ([locid])
-GO
-ALTER TABLE [dbo].[homeVisits] CHECK CONSTRAINT [FK_homeVisits.locid]
-GO
-ALTER TABLE [dbo].[homeVisits]  WITH CHECK ADD  CONSTRAINT [FK_homeVisits.vid] FOREIGN KEY([vid])
-REFERENCES [dbo].[visitsInfo] ([vid])
-GO
-ALTER TABLE [dbo].[homeVisits] CHECK CONSTRAINT [FK_homeVisits.vid]
-GO
 ALTER TABLE [dbo].[locationInfo]  WITH CHECK ADD  CONSTRAINT [FK_locationInfo.bid] FOREIGN KEY([bid])
 REFERENCES [dbo].[brandsInfo] ([bid])
 GO
@@ -324,20 +293,20 @@ REFERENCES [dbo].[locationInfo] ([locid])
 GO
 ALTER TABLE [dbo].[visitsInfo] CHECK CONSTRAINT [FK_visitsInfo.locid]
 GO
-ALTER TABLE [dbo].[workVisits]  WITH CHECK ADD  CONSTRAINT [FK_workVisits.cbgid] FOREIGN KEY([cbgid])
+ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.cbgid] FOREIGN KEY([cbgid])
 REFERENCES [dbo].[censusBlockGroups] ([cbgid])
 GO
-ALTER TABLE [dbo].[workVisits] CHECK CONSTRAINT [FK_workVisits.cbgid]
+ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.cbgid]
 GO
-ALTER TABLE [dbo].[workVisits]  WITH CHECK ADD  CONSTRAINT [FK_workVisits.locid] FOREIGN KEY([locid])
+ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.locid] FOREIGN KEY([locid])
 REFERENCES [dbo].[locationInfo] ([locid])
 GO
-ALTER TABLE [dbo].[workVisits] CHECK CONSTRAINT [FK_workVisits.locid]
+ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.locid]
 GO
-ALTER TABLE [dbo].[workVisits]  WITH CHECK ADD  CONSTRAINT [FK_workVisits.vid] FOREIGN KEY([vid])
+ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.vid] FOREIGN KEY([vid])
 REFERENCES [dbo].[visitsInfo] ([vid])
 GO
-ALTER TABLE [dbo].[workVisits] CHECK CONSTRAINT [FK_workVisits.vid]
+ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.vid]
 GO
 USE [master]
 GO
