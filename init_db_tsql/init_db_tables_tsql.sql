@@ -38,10 +38,10 @@ CREATE TABLE [dbo].[relatedBrands](
 	[vid] [int] NOT NULL,
 	[locid] [int] NOT NULL,
 	[visit_count] [int] NOT NULL,
-	[day_week_ind] [char(1)] NOT NULL,
+	[day_week_ind] [char](1) NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
-	[bwid] ASC
+	[rbid] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -195,10 +195,10 @@ CREATE TABLE [dbo].[visitsType](
 	[cbgid_loc] [int] NOT NULL,
 	[cbgid_orig] [int] NOT NULL,
 	[visit_count] [int] NOT NULL,
-	[home_work_ind] [char] NOT NULL,
+	[home_work_ind] [char](1) NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
-	[wvid] ASC
+	[vtid] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -262,12 +262,12 @@ REFERENCES [dbo].[locationInfo] ([locid])
 GO
 ALTER TABLE [dbo].[visitsInfo] CHECK CONSTRAINT [FK_visitsInfo.locid]
 GO
-ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.cbgid_loc] FOREIGN KEY([cbgid])
+ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.cbgid_loc] FOREIGN KEY([cbgid_loc])
 REFERENCES [dbo].[censusBlockGroups] ([cbgid])
 GO
 ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.cbgid_loc]
 GO
-ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.cbgid_orig] FOREIGN KEY([cbgid])
+ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.cbgid_orig] FOREIGN KEY([cbgid_orig])
 REFERENCES [dbo].[censusBlockGroups] ([cbgid])
 GO
 ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.cbgid_orig]
