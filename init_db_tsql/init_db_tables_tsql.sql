@@ -1,12 +1,10 @@
 USE [Foot_Traffic]
 
-DROP TABLE IF EXISTS[dbo].[brandsDay]
-DROP TABLE IF EXISTS[dbo].[brandsWeek]
+DROP TABLE IF EXISTS[dbo].[relatedBrands]
 DROP TABLE IF EXISTS[dbo].[categoriesXref]
 DROP TABLE IF EXISTS[dbo].[categories]
 DROP TABLE IF EXISTS[dbo].[deviceLog]
 DROP TABLE IF EXISTS[dbo].[devices]
-DROP TABLE IF EXISTS[dbo].[homeVisits]
 DROP TABLE IF EXISTS[dbo].[visitsType]
 DROP TABLE IF EXISTS[dbo].[visitsInfo]
 DROP TABLE IF EXISTS[dbo].[locationInfo]
@@ -14,22 +12,6 @@ DROP TABLE IF EXISTS[dbo].[censusBlockGroups]
 DROP TABLE IF EXISTS[dbo].[brandsInfo]
 DROP TABLE IF EXISTS[dbo].[naicsCodes]
 
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[brandsDay](
-	[bdid] [int] IDENTITY(1,1) NOT NULL,
-	[bid] [int] NOT NULL,
-	[vid] [int] NOT NULL,
-	[locid] [int] NOT NULL,
-	[visit_count] [int] NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[bdid] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
 /****** Object:  Table [dbo].[brandsInfo]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
@@ -45,17 +27,18 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[brandsWeek]    Script Date: 10/17/2022 3:40:25 PM ******/
+/****** Object:  Table [dbo].[relatedBrands]    Script Date: 10/17/2022 3:40:25 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[brandsWeek](
-	[bwid] [int] IDENTITY(1,1) NOT NULL,
+CREATE TABLE [dbo].[relatedBrands](
+	[rbid] [int] IDENTITY(1,1) NOT NULL,
 	[bid] [int] NOT NULL,
 	[vid] [int] NOT NULL,
 	[locid] [int] NOT NULL,
 	[visit_count] [int] NOT NULL,
+	[day_week_ind] [char(1)] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[bwid] ASC
@@ -218,40 +201,25 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[brandsDay]  WITH CHECK ADD  CONSTRAINT [FK_brandsDay.bid] FOREIGN KEY([bid])
-REFERENCES [dbo].[brandsInfo] ([bid])
-GO
-ALTER TABLE [dbo].[brandsDay] CHECK CONSTRAINT [FK_brandsDay.bid]
-GO
-ALTER TABLE [dbo].[brandsDay]  WITH CHECK ADD  CONSTRAINT [FK_brandsDay.locid] FOREIGN KEY([locid])
-REFERENCES [dbo].[locationInfo] ([locid])
-GO
-ALTER TABLE [dbo].[brandsDay] CHECK CONSTRAINT [FK_brandsDay.locid]
-GO
-ALTER TABLE [dbo].[brandsDay]  WITH CHECK ADD  CONSTRAINT [FK_brandsDay.vid] FOREIGN KEY([vid])
-REFERENCES [dbo].[visitsInfo] ([vid])
-GO
-ALTER TABLE [dbo].[brandsDay] CHECK CONSTRAINT [FK_brandsDay.vid]
-GO
 ALTER TABLE [dbo].[brandsInfo]  WITH CHECK ADD  CONSTRAINT [FK_brandsInfo.nid] FOREIGN KEY([nid])
 REFERENCES [dbo].[naicsCodes] ([nid])
 GO
 ALTER TABLE [dbo].[brandsInfo] CHECK CONSTRAINT [FK_brandsInfo.nid]
 GO
-ALTER TABLE [dbo].[brandsWeek]  WITH CHECK ADD  CONSTRAINT [FK_brandsWeek.bid] FOREIGN KEY([bid])
+ALTER TABLE [dbo].[relatedBrands]  WITH CHECK ADD  CONSTRAINT [FK_relatedBrands.bid] FOREIGN KEY([bid])
 REFERENCES [dbo].[brandsInfo] ([bid])
 GO
-ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.bid]
+ALTER TABLE [dbo].[relatedBrands] CHECK CONSTRAINT [FK_relatedBrands.bid]
 GO
-ALTER TABLE [dbo].[brandsWeek]  WITH CHECK ADD  CONSTRAINT [FK_brandsWeek.locid] FOREIGN KEY([locid])
+ALTER TABLE [dbo].[relatedBrands]  WITH CHECK ADD  CONSTRAINT [FK_relatedBrands.locid] FOREIGN KEY([locid])
 REFERENCES [dbo].[locationInfo] ([locid])
 GO
-ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.locid]
+ALTER TABLE [dbo].[relatedBrands] CHECK CONSTRAINT [FK_relatedBrands.locid]
 GO
-ALTER TABLE [dbo].[brandsWeek]  WITH CHECK ADD  CONSTRAINT [FK_brandsWeek.vid] FOREIGN KEY([vid])
+ALTER TABLE [dbo].[relatedBrands]  WITH CHECK ADD  CONSTRAINT [FK_relatedBrands.vid] FOREIGN KEY([vid])
 REFERENCES [dbo].[visitsInfo] ([vid])
 GO
-ALTER TABLE [dbo].[brandsWeek] CHECK CONSTRAINT [FK_brandsWeek.vid]
+ALTER TABLE [dbo].[relatedBrands] CHECK CONSTRAINT [FK_relatedBrands.vid]
 GO
 ALTER TABLE [dbo].[categoriesXref]  WITH CHECK ADD  CONSTRAINT [FK_categoriesXref.cid] FOREIGN KEY([cid])
 REFERENCES [dbo].[categories] ([cid])
