@@ -192,7 +192,8 @@ CREATE TABLE [dbo].[visitsType](
 	[vtid] [int] IDENTITY(1,1) NOT NULL,
 	[locid] [int] NOT NULL,
 	[vid] [int] NOT NULL,
-	[cbgid] [int] NOT NULL,
+	[cbgid_loc] [int] NOT NULL,
+	[cbgid_orig] [int] NOT NULL,
 	[visit_count] [int] NOT NULL,
 	[home_work_ind] [char] NOT NULL,
 PRIMARY KEY CLUSTERED 
@@ -261,10 +262,15 @@ REFERENCES [dbo].[locationInfo] ([locid])
 GO
 ALTER TABLE [dbo].[visitsInfo] CHECK CONSTRAINT [FK_visitsInfo.locid]
 GO
-ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.cbgid] FOREIGN KEY([cbgid])
+ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.cbgid_loc] FOREIGN KEY([cbgid])
 REFERENCES [dbo].[censusBlockGroups] ([cbgid])
 GO
-ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.cbgid]
+ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.cbgid_loc]
+GO
+ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.cbgid_orig] FOREIGN KEY([cbgid])
+REFERENCES [dbo].[censusBlockGroups] ([cbgid])
+GO
+ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.cbgid_orig]
 GO
 ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.locid] FOREIGN KEY([locid])
 REFERENCES [dbo].[locationInfo] ([locid])
