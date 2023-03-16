@@ -1,4 +1,4 @@
-ALTER PROCEDURE [dbo].[insertHomeVisits](
+CREATE OR ALTER PROCEDURE [dbo].[insertHomeVisits](
   @a_placekey VARCHAR(max),
   @w_daterangestart VARCHAR(max),
   @ad_visitorhomecbg VARCHAR(max),
@@ -28,9 +28,9 @@ BEGIN
 
   IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
     BEGIN
-        SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
-        INSERT INTO homeVisits(locid, vid, cbgid, visit_count)
-        VALUES (@locidout, @vidout, @cbgidout, @ad_visitorhomecbg_cnt);
+		    SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
+        INSERT INTO visitsType(locid, vid, cbgid, visit_count, home_work_ind)
+        VALUES (@locidout, @vidout, @cbgidout, @af_visitorhomecbg_cnt, 'h');
     END;
 END;
 END;
