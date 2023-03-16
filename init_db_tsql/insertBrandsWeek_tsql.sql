@@ -1,4 +1,4 @@
-ALTER PROCEDURE [dbo].[insertBrandsWeek](
+CREATE OR ALTER PROCEDURE [dbo].[insertRelatedBrands_Week](
 	@a_placekey VARCHAR(max),
 	@w_daterangestart VARCHAR(max),
 	@al_relatedsameweekbrand VARCHAR(max),
@@ -27,9 +27,9 @@ BEGIN
 	IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
 	BEGIN
 		SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart));
-		SET @locidout = (SELECT TOP 1 locid FROM locationInfo l WHERE l.placekey=@a_placekey);		
-		INSERT INTO brandsWeek(vid, bid, locid, visit_count)
-		VALUES (@vidout, @bidout, @locidout, @al_relatedsameweekbrand_cnt);
+		SET @locidout = (SELECT TOP 1 locid FROM locationInfo l WHERE l.placekey=@a_placekey);			
+		INSERT INTO relatedBrands(bid, vid, locid, visit_count, day_week_ind)
+		VALUES (@bidout, @vidout, @locidout, @ak_relatedsamedaybrand_cnt, 'w');
 	END;
 END;
 END;
