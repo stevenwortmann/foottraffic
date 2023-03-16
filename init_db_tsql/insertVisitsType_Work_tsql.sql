@@ -1,5 +1,5 @@
 CREATE OR ALTER PROCEDURE [dbo].[insertVisitsType_Work](
-	@a_placekey VARCHAR(max)
+	@a_placekey VARCHAR(max),
 	@ac_poicbg BIGINT,
 	@w_daterangestart VARCHAR(max),
 	@af_visitordaytimecbg BIGINT,
