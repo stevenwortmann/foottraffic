@@ -18,7 +18,7 @@ BEGIN
 
   IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg)=1
     BEGIN
-      SET @cbgidout=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg);
+      SET @cbgidout_orig=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg);
     END;
 
   ELSE
