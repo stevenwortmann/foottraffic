@@ -30,7 +30,7 @@ BEGIN
     BEGIN
 		    SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
         INSERT INTO visitsType(locid, vid, cbgid, visit_count, home_work_ind)
-        VALUES (@locidout, @vidout, @cbgidout, @af_visitorhomecbg_cnt, 'h');
+        VALUES (@locidout, @vidout, @cbgidout, @ad_visitorhomecbg_cnt, 'h');
     END;
 END;
 END;
