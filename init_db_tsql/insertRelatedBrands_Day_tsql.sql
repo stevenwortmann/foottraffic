@@ -26,8 +26,8 @@ BEGIN
 
 	IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
 	BEGIN
-		SET @vidout = (SELECT vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart));
-		SET @locidout = (SELECT locid FROM locationInfo WHERE placekey=@a_placekey);			
+		SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart));
+		SET @locidout = (SELECT TOP 1 locid FROM locationInfo WHERE placekey=@a_placekey);			
 		INSERT INTO relatedBrands(bid, vid, locid, visit_count, day_week_ind)
 		VALUES (@bidout, @vidout, @locidout, @ak_relatedsamedaybrand_cnt, 'd');
 	END;
