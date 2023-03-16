@@ -13,7 +13,8 @@ DECLARE @locidout INT;
 
 BEGIN
 
-  SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey) 
+  SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey)
+  SET @cbgidout_loc=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ac_poicbg)
 
   IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg)=1
     BEGIN
@@ -24,14 +25,14 @@ BEGIN
     BEGIN
       INSERT INTO censusBlockGroups(cbg_number)
       VALUES (@ad_visitorhomecbg);
-      SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
+      SET @cbgidout_orig=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
     END;
 
   IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
     BEGIN
 		    SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
         INSERT INTO visitsType(locid, vid, cbgid_loc, cbgid_orig, visit_count, home_work_ind)
-        VALUES (@locidout, @vidout, @ac_poicbg, @cbgidout, @ad_visitorhomecbg_cnt, 'h');
+        VALUES (@locidout, @vidout, @cbgidout_loc, @cbgidout_orig, @ad_visitorhomecbg_cnt, 'h');
     END;
 END;
 END;
