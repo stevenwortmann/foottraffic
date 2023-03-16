@@ -28,8 +28,8 @@ BEGIN
 	BEGIN
 		SET @vidout = (SELECT vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart));
 		SET @locidout = (SELECT locid FROM locationInfo WHERE placekey=@a_placekey);			
-		INSERT INTO brandsDay(vid, bid, locid, visit_count)
-		VALUES (@vidout, @bidout, @locidout, @ak_relatedsamedaybrand_cnt);
+		INSERT INTO relatedBrands(bid, vid, locid, visit_count, day_week_ind)
+		VALUES (@bidout, @vidout, @locidout, @ak_relatedsamedaybrand_cnt, 'd');
 	END;
 END;
 END;
