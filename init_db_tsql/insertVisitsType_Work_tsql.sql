@@ -8,7 +8,8 @@ CREATE OR ALTER PROCEDURE [dbo].[insertVisitsType_Work](
 AS
 BEGIN
 DECLARE @vidout INT;
-DECLARE @cbgidout INT;
+DECLARE @cbgidout_loc INT;
+DECLARE @cbgidout_orig INT;
 DECLARE @locidout INT;
 
 BEGIN
