@@ -6,8 +6,8 @@ import pyodbc
 import time
 
 def initialize_database_tables():
-	global conn  
-	global cur
+    global conn  
+    global cur
 	
     sql1 = ('''
         USE [Foot_Traffic]
@@ -311,10 +311,10 @@ def initialize_database_tables():
     conn.close
 
 def initialize_database_stored_procs():
-	global conn
-	global cur
+    global conn
+    global cur
 
-	sql1=('''
+    sql1=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertRelatedBrands_Day](
         @a_placekey VARCHAR(max),
         @w_daterangestart VARCHAR(max),
@@ -350,9 +350,9 @@ def initialize_database_stored_procs():
         END;
         END;
         END;
-	    ''')
-	
-	sql2=('''
+        ''')
+
+    sql2=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertRelatedBrands_Week](
         @a_placekey VARCHAR(max),
         @w_daterangestart VARCHAR(max),
@@ -388,9 +388,9 @@ def initialize_database_stored_procs():
         END;
         END;
         END;
-	    ''')
-	
-	sql3=('''
+        ''')
+
+    sql3=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertCategories](
         @a_placekey VARCHAR(max),
         @r_categorytag VARCHAR(max)
@@ -417,9 +417,9 @@ def initialize_database_stored_procs():
         END;
         END;
         END;
-	    ''')
-	
-	sql4=('''
+        ''')
+
+    sql4=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertDeviceCount]( -- 'device_name' field fully populated with init_db_tables
         @a_placekey VARCHAR(max),
         @w_daterangestart VARCHAR(max),
@@ -442,9 +442,9 @@ def initialize_database_stored_procs():
         END;
         END;
         END;
-	    ''')
-	
-	sql5=('''
+        ''')
+
+    sql5=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertFootTrafficRecord](
         @a_placekey VARCHAR(max),
         @c_locationname VARCHAR(max),
@@ -544,9 +544,9 @@ def initialize_database_stored_procs():
         END;
         END;
         END;
-	    ''')
-	
-	sql6=('''
+        ''')
+
+    sql6=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertVisitsType_Home](
         @a_placekey VARCHAR(max),
         @ac_poicbg BIGINT,
@@ -586,9 +586,9 @@ def initialize_database_stored_procs():
         END;
         END;
         END;
-	    ''')
-	
-	sql7=('''
+        ''')
+
+    sql7=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertVisitsType_Work](
         @a_placekey VARCHAR(max),
         @ac_poicbg BIGINT,
@@ -628,17 +628,18 @@ def initialize_database_stored_procs():
         END;
         END;
         END;
-	    ''')
+        ''')
 
-	for query in [sql1,sql2,sql3,sql4,sql5,sql6,sql7]
-		cur.execute(query)
-		conn.commit()
+    for query in [sql1,sql2,sql3,sql4,sql5,sql6,sql7]
+        cur.execute(query)
+        conn.commit()
+
     cur.close()
     conn.close
 
 def poiRecordInsertion(file):
-	global conn
-	global cur
+    global conn
+    global cur
 
     sql_insertFootTrafficRecord='''EXECUTE [insertFootTrafficRecord]
        @a_placekey=?
@@ -747,8 +748,8 @@ def poiRecordInsertion(file):
                 x = (x.replace('{"',"")).replace('\\',"").replace("}","").split('":')
                 if (x[1][0]).isalpha() is True: pass
                 else:
-                    values_insertBrandsDay = (row.placekey, row.date_range_start, x[0], int(x[1]))
-                    cur.execute(sql_insertBrandsDay, values_insertBrandsDay)
+                    values_insertRelatedBrands_Day = (row.placekey, row.date_range_start, x[0], int(x[1]))
+                    cur.execute(sql_insertRelatedBrands_Day, values_insertRelatedBrands_Day)
                     cur.commit()
                     #print(x)
 
