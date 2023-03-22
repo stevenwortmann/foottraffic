@@ -315,82 +315,52 @@ def initialize_database_stored_procs():
     global cur
 
     sql1=('''
-        CREATE OR ALTER PROCEDURE [dbo].[insertRelatedBrands_Day](
+        CREATE OR ALTER PROCEDURE [dbo].[insertRelatedBrands](
         @a_placekey VARCHAR(max),
         @w_daterangestart VARCHAR(max),
-        @ak_relatedsamedaybrand VARCHAR(max),
-        @ak_relatedsamedaybrand_cnt INT
+        @ak_al_relatedbrand VARCHAR(max),
+        @ak_al_relatedbrand_cnt INT,
+        @day_week_ind CHAR(1)
         )
         AS
         BEGIN
+
         DECLARE @vidout INT;
         DECLARE @bidout INT;
         DECLARE @locidout INT;
 
         BEGIN
-
-        IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@ak_relatedsamedaybrand)=1
+        IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@ak_al_relatedbrand)=1
         BEGIN
-            SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@ak_relatedsamedaybrand);
+        SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@ak_al_relatedbrand);
         END;
         ELSE
         BEGIN
-            INSERT INTO brandsInfo(brand_name)
-            VALUES (@ak_relatedsamedaybrand);
-            SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
+        INSERT INTO brandsInfo(brand_name)
+        VALUES (@ak_al_relatedbrand);
+        SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
         END;
-
 
         IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
         BEGIN
         SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart));
-        SET @locidout = (SELECT TOP 1 locid FROM locationInfo WHERE placekey=@a_placekey);			
+        SET @locidout = (SELECT TOP 1 locid FROM locationInfo WHERE placekey=@a_placekey);
+        IF @day_week_ind = 'd' -- Check if day_week_ind is 'd' for 'same-day'
+        BEGIN
         INSERT INTO relatedBrands(bid, vid, locid, visit_count, day_week_ind)
-        VALUES (@bidout, @vidout, @locidout, @ak_relatedsamedaybrand_cnt, 'd');
+        VALUES (@bidout, @vidout, @locidout, @ak_al_relatedbrand_cnt, 'd');
+        END;
+        ELSE IF @day_week_ind = 'w' -- Check if day_week_ind is 'w' for 'same-week'
+        BEGIN
+        INSERT INTO relatedBrands(bid, vid, locid, visit_count, day_week_ind)
+        VALUES (@bidout, @vidout, @locidout, @ak_al_relatedbrand_cnt, 'w');
+        END;
         END;
         END;
         END;
         ''')
 
     sql2=('''
-        CREATE OR ALTER PROCEDURE [dbo].[insertRelatedBrands_Week](
-        @a_placekey VARCHAR(max),
-        @w_daterangestart VARCHAR(max),
-        @al_relatedsameweekbrand VARCHAR(max),
-        @al_relatedsameweekbrand_cnt INT
-        )
-        AS
-        BEGIN
-        DECLARE @vidout INT;
-        DECLARE @bidout INT;
-        DECLARE @locidout INT;
-
-        BEGIN
-
-        IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@al_relatedsameweekbrand)=1
-        BEGIN
-        SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@al_relatedsameweekbrand);
-        END;
-        ELSE
-        BEGIN
-        INSERT INTO brandsInfo(brand_name)
-        VALUES (@al_relatedsameweekbrand);
-        SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
-        END;
-
-
-        IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
-        BEGIN
-        SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart));
-        SET @locidout = (SELECT TOP 1 locid FROM locationInfo l WHERE l.placekey=@a_placekey);			
-        INSERT INTO relatedBrands(bid, vid, locid, visit_count, day_week_ind)
-        VALUES (@bidout, @vidout, @locidout, @al_relatedsameweekbrand_cnt, 'w');
-        END;
-        END;
-        END;
-        ''')
-
-    sql3=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertCategories](
         @a_placekey VARCHAR(max),
         @r_categorytag VARCHAR(max)
@@ -419,7 +389,7 @@ def initialize_database_stored_procs():
         END;
         ''')
 
-    sql4=('''
+    sql3=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertDeviceCount]( -- 'device_name' field fully populated with init_db_tables
         @a_placekey VARCHAR(max),
         @w_daterangestart VARCHAR(max),
@@ -444,7 +414,7 @@ def initialize_database_stored_procs():
         END;
         ''')
 
-    sql5=('''
+    sql4=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertFootTrafficRecord](
         @a_placekey VARCHAR(max),
         @c_locationname VARCHAR(max),
@@ -546,7 +516,7 @@ def initialize_database_stored_procs():
         END;
         ''')
 
-    sql6=('''
+    sql5=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertVisitsType_Home](
         @a_placekey VARCHAR(max),
         @ac_poicbg BIGINT,
@@ -588,7 +558,7 @@ def initialize_database_stored_procs():
         END;
         ''')
 
-    sql7=('''
+    sql6=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertVisitsType_Work](
         @a_placekey VARCHAR(max),
         @ac_poicbg BIGINT,
@@ -630,7 +600,7 @@ def initialize_database_stored_procs():
         END;
         ''')
 
-    for query in [sql1,sql2,sql3,sql4,sql5,sql6,sql7]
+    for query in [sql1,sql2,sql3,sql4,sql5,sql6]:
         cur.execute(query)
         conn.commit()
 
@@ -684,18 +654,12 @@ def poiRecordInsertion(file):
       ,@af_visitordaytimecbg_cnt=?
     '''
 
-    sql_insertRelatedBrands_Day='''EXECUTE [insertBrandsDay] 
+    sql_insertRelatedBrands='''EXECUTE [insertRelatedBrands] 
        @a_placekey=?
       ,@w_daterangestart=?
-      ,@ak_relatedsamedaybrand=?
-      ,@ak_relatedsamedaybrand_cnt=?
-    '''
-
-    sql_insertRelatedBrands_Week='''EXECUTE [insertBrandsWeek] 
-       @a_placekey=?
-      ,@w_daterangestart=?
-      ,@al_relatedsameweekbrand=?
-      ,@al_relatedsameweekbrand_cnt=?
+      ,@ak_al_relatedsamedaybrand=?
+      ,@ak_al_relatedsamedaybrand_cnt=?
+      ,home_work_ind=?
     '''
 
     sql_insertDeviceCount='''EXECUTE [insertDeviceCount] 
@@ -748,8 +712,8 @@ def poiRecordInsertion(file):
                 x = (x.replace('{"',"")).replace('\\',"").replace("}","").split('":')
                 if (x[1][0]).isalpha() is True: pass
                 else:
-                    values_insertRelatedBrands_Day = (row.placekey, row.date_range_start, x[0], int(x[1]))
-                    cur.execute(sql_insertRelatedBrands_Day, values_insertRelatedBrands_Day)
+                    values_insertRelatedBrands_Day = (row.placekey, row.date_range_start, x[0], int(x[1]), 'd')
+                    cur.execute(sql_insertRelatedBrands, values_insertRelatedBrands_Day)
                     cur.commit()
                     #print(x)
 
@@ -758,8 +722,8 @@ def poiRecordInsertion(file):
                 x = (x.replace('{"',"")).replace('\\',"").replace("}","").split('":')
                 if (x[1][0]).isalpha() is True: pass
                 else:
-                    values_insertRelatedBrands_Week = (row.placekey, row.date_range_start, x[0], int(x[1]))
-                    cur.execute(sql_insertRelatedBrands_Week, values_insertRelatedBrands_Week)
+                    values_insertRelatedBrands_Week = (row.placekey, row.date_range_start, x[0], int(x[1]), 'w')
+                    cur.execute(sql_insertRelatedBrands, values_insertRelatedBrands_Week)
                     cur.commit()
                     #print(x)
 
