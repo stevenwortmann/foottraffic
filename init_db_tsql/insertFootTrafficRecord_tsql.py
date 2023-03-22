@@ -517,90 +517,46 @@ def initialize_database_stored_procs():
         ''')
 
     sql5=('''
-        CREATE OR ALTER PROCEDURE [dbo].[insertVisitsType_Home](
+        CREATE OR ALTER PROCEDURE [dbo].[insertVisitsType](
         @a_placekey VARCHAR(max),
-        @ac_poicbg BIGINT,
         @w_daterangestart VARCHAR(max),
-        @ad_visitorhomecbg VARCHAR(max),
-        @ad_visitorhomecbg_cnt INT
+        @ad_af_visitorcbg VARCHAR(max),
+        @ad_af_visitorcbg_cnt INT,
+        home_work_ind CHAR(1)
         )
         AS
         BEGIN
         DECLARE @vidout INT;
-        DECLARE @cbgidout_loc INT;
-        DECLARE @cbgidout_orig INT;
+        DECLARE @cbgidout INT;
         DECLARE @locidout INT;
 
         BEGIN
 
-        SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey)
-        SET @cbgidout_loc=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ac_poicbg)
+        SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey) 
 
-        IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg)=1
+        IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ad_af_visitorcbg)=1
         BEGIN
-        SET @cbgidout_orig=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ad_visitorhomecbg);
+        SET @cbgidout=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ad_af_visitorcbg);
         END;
 
         ELSE
         BEGIN
         INSERT INTO censusBlockGroups(cbg_number)
-        VALUES (@ad_visitorhomecbg);
-        SET @cbgidout_orig=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
+        VALUES (@ad_af_visitorcbg);
+        SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
         END;
 
         IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
         BEGIN
         SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
-        INSERT INTO visitsType(locid, vid, cbgid_loc, cbgid_orig, visit_count, home_work_ind)
-        VALUES (@locidout, @vidout, @cbgidout_loc, @cbgidout_orig, @ad_visitorhomecbg_cnt, 'h');
+        INSERT INTO visitsType(locid, vid, cbgid, visit_count, home_work_ind)
+        VALUES (@locidout, @vidout, @cbgidout, @ad_af_visitorcbg_cnt, home_work_ind);
         END;
         END;
         END;
         ''')
 
-    sql6=('''
-        CREATE OR ALTER PROCEDURE [dbo].[insertVisitsType_Work](
-        @a_placekey VARCHAR(max),
-        @ac_poicbg BIGINT,
-        @w_daterangestart VARCHAR(max),
-        @af_visitordaytimecbg BIGINT,
-        @af_visitordaytimecbg_cnt INT
-        )
-        AS
-        BEGIN
-        DECLARE @vidout INT;
-        DECLARE @cbgidout_loc INT;
-        DECLARE @cbgidout_orig INT;
-        DECLARE @locidout INT;
-
-        BEGIN
-
-        SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey)
-        SET @cbgidout_loc=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ac_poicbg)
-
-        IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@af_visitordaytimecbg)=1
-        BEGIN
-        SET @cbgidout_orig=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@af_visitordaytimecbg);
-        END;
-
-        ELSE
-        BEGIN
-        INSERT INTO censusBlockGroups(cbg_number)
-        VALUES (@af_visitordaytimecbg);
-        SET @cbgidout_orig=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
-        END;
-
-        IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
-        BEGIN
-        SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
-        INSERT INTO visitsType(locid, vid, cbgid_loc, cbgid_orig, visit_count, home_work_ind)
-        VALUES (@locidout, @vidout, @cbgidout_loc, @cbgidout_orig, @af_visitordaytimecbg_cnt, 'w');
-        END;
-        END;
-        END;
-        ''')
-
-    for query in [sql1,sql2,sql3,sql4,sql5,sql6]:
+    for query in [sql1,sql2,sql3,sql4,sql5]:
         cur.execute(query)
         conn.commit()
 
@@ -638,20 +594,12 @@ def poiRecordInsertion(file):
       ,@ar_normvisits_totalvisitors=?
     '''
 
-    sql_insertVisitsType_Home='''EXECUTE [insertVisitsType_Home] 
+    sql_insertVisitsType='''EXECUTE [insertVisitsType] 
        @a_placekey=?
 	  ,@ac_poicbg=?
       ,@w_daterangestart=?
-      ,@ad_visitorhomecbg=?
-      ,@ad_visitorhomecbg_cnt=?
-    '''
-
-    sql_insertVisitsType_Work='''EXECUTE [insertVisitsType_Work] 
-       @a_placekey=?
-	  ,@ac_poicbg=?
-      ,@w_daterangestart=?
-      ,@af_visitordaytimecbg=?
-      ,@af_visitordaytimecbg_cnt=?
+      ,@ad_af_visitorcbg=?
+      ,@ad_af_visitorcbg_cnt=?
     '''
 
     sql_insertRelatedBrands='''EXECUTE [insertRelatedBrands] 
@@ -692,8 +640,8 @@ def poiRecordInsertion(file):
                 x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
                 if (x[0][0]).isalpha() is True: pass
                 else:
-                    values_insertVisitsType_Home = (row.placekey, row.poi_cbg, row.date_range_start, int(x[0]), int(x[1]))
-                    cur.execute(sql_insertVisitsType_Home, values_insertVisitsType_Home)
+                    values_insertVisitsType_Home = (row.placekey, row.poi_cbg, row.date_range_start, int(x[0]), int(x[1]), 'h')
+                    cur.execute(sql_insertVisitsType, values_insertVisitsType_Home)
                     cur.commit()
                     #print(x)
 
@@ -702,8 +650,8 @@ def poiRecordInsertion(file):
                 x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
                 if (x[0][0]).isalpha() is True: pass
                 else:
-                    values_insertVisitsType_Work = (row.placekey, row.poi_cbg, row.date_range_start, int(x[0]), int(x[1]))
-                    cur.execute(sql_insertVisitsType_Work, values_insertVisitsType_Work)
+                    values_insertVisitsType_Work = (row.placekey, row.poi_cbg, row.date_range_start, int(x[0]), int(x[1]), 'w')
+                    cur.execute(sql_insertVisitsType, values_insertVisitsType_Work)
                     cur.commit()
                     #print(x)
 
@@ -744,7 +692,7 @@ def poiRecordInsertion(file):
 
 def main():
     driver = '{SQL Server}'
-    server = 'PDTTESQLDEV01'
+    server = ''
     db = 'Foot_Traffic' # blank database already created
     user = ''
     password = ''
