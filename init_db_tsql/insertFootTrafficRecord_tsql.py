@@ -324,12 +324,12 @@ def initialize_database_stored_procs():
         )
         AS
         BEGIN
-
         DECLARE @vidout INT;
         DECLARE @bidout INT;
         DECLARE @locidout INT;
 
         BEGIN
+
         IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@ak_al_relatedbrand)=1
         BEGIN
         SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@ak_al_relatedbrand);
@@ -341,20 +341,13 @@ def initialize_database_stored_procs():
         SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
         END;
 
+
         IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
         BEGIN
         SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart));
-        SET @locidout = (SELECT TOP 1 locid FROM locationInfo WHERE placekey=@a_placekey);
-        IF @day_week_ind = 'd' -- Check if day_week_ind is 'd' for 'same-day'
-        BEGIN
+        SET @locidout = (SELECT TOP 1 locid FROM locationInfo WHERE placekey=@a_placekey);			
         INSERT INTO relatedBrands(bid, vid, locid, visit_count, day_week_ind)
-        VALUES (@bidout, @vidout, @locidout, @ak_al_relatedbrand_cnt, 'd');
-        END;
-        ELSE IF @day_week_ind = 'w' -- Check if day_week_ind is 'w' for 'same-week'
-        BEGIN
-        INSERT INTO relatedBrands(bid, vid, locid, visit_count, day_week_ind)
-        VALUES (@bidout, @vidout, @locidout, @ak_al_relatedbrand_cnt, 'w');
-        END;
+        VALUES (@bidout, @vidout, @locidout, @ak_al_relatedbrand_cnt, @day_week_ind);
         END;
         END;
         END;
@@ -522,7 +515,7 @@ def initialize_database_stored_procs():
         @w_daterangestart VARCHAR(max),
         @ad_af_visitorcbg VARCHAR(max),
         @ad_af_visitorcbg_cnt INT,
-        home_work_ind CHAR(1)
+        @home_work_ind CHAR(1)
         )
         AS
         BEGIN
@@ -550,7 +543,7 @@ def initialize_database_stored_procs():
         BEGIN
         SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
         INSERT INTO visitsType(locid, vid, cbgid, visit_count, home_work_ind)
-        VALUES (@locidout, @vidout, @cbgidout, @ad_af_visitorcbg_cnt, home_work_ind);
+        VALUES (@locidout, @vidout, @cbgidout, @ad_af_visitorcbg_cnt, @home_work_ind);
         END;
         END;
         END;
@@ -600,14 +593,15 @@ def poiRecordInsertion(file):
       ,@w_daterangestart=?
       ,@ad_af_visitorcbg=?
       ,@ad_af_visitorcbg_cnt=?
+      ,@home_work_ind=?
     '''
 
     sql_insertRelatedBrands='''EXECUTE [insertRelatedBrands] 
        @a_placekey=?
       ,@w_daterangestart=?
-      ,@ak_al_relatedsamedaybrand=?
-      ,@ak_al_relatedsamedaybrand_cnt=?
-      ,home_work_ind=?
+      ,@ak_al_relatedbrand=?
+      ,@ak_al_relatedbrand_cnt=?
+      ,@day_week_ind=?
     '''
 
     sql_insertDeviceCount='''EXECUTE [insertDeviceCount] 
