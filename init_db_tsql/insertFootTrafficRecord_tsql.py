@@ -505,6 +505,7 @@ def initialize_database_stored_procs():
         @ao_normvisits_regionnaicsvisits, @ap_normvisits_regionnaicsvisitors, @aq_normvisits_totalvisits, @ar_normvisits_totalvisitors);
         SET @vidout=(SELECT TOP 1 vid FROM visitsInfo ORDER BY vid DESC);
         END;
+	    SELECT @nidout AS nidout, @bidout AS bidout, @locidout AS locidout, @cbgidout AS cbgidout, @vidout AS vidout;
         END;
         END;
         ''')
@@ -625,6 +626,8 @@ def poiRecordInsertion(file):
                                           row.normalized_visits_by_region_naics_visits, row.normalized_visits_by_region_naics_visitors,
                                           row.normalized_visits_by_total_visits,row.normalized_visits_by_total_visitors )
         cur.execute(sql_insertFootTrafficRecord, values_insertFootTrafficRecord)
+        row = cur.fetchone()
+        nid, bid, locid, cbgid, vid = row['nidout'], row['bidout'], row['locidout'], row['cbgidout'], row['vidout']
         cur.commit()
         print(row.location_name[:20]+', '+row.street_address+', '+row.city+', '+row.region+' '+str(row.postal_code)+'... '+
              row.date_range_start+": "+str(int(row.normalized_visits_by_state_scaling))+' total visitors...')

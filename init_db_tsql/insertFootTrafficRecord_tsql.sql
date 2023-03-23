@@ -95,5 +95,8 @@ DECLARE @vidout INT;
           @ao_normvisits_regionnaicsvisits, @ap_normvisits_regionnaicsvisitors, @aq_normvisits_totalvisits, @ar_normvisits_totalvisitors);
 		    SET @vidout=(SELECT TOP 1 vid FROM visitsInfo ORDER BY vid DESC);
       END;
+
+	SELECT @nidout AS nidout, @bidout AS bidout, @locidout AS locidout, @cbgidout AS cbgidout, @vidout AS vidout;
+
     END;
 END;
