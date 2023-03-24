@@ -12,20 +12,19 @@ def initialize_database_tables():
     sql1 = ('''
         USE [Foot_Traffic]
 
+        DROP TABLE IF EXISTS[dbo].[visitsType]
         DROP TABLE IF EXISTS[dbo].[relatedBrands]
         DROP TABLE IF EXISTS[dbo].[categoriesXref]
         DROP TABLE IF EXISTS[dbo].[categories]
-        DROP TABLE IF EXISTS[dbo].[deviceLog]
         DROP TABLE IF EXISTS[dbo].[devices]
-        DROP TABLE IF EXISTS[dbo].[visitsType]
+        DROP TABLE IF EXISTS[dbo].[deviceLog]
         DROP TABLE IF EXISTS[dbo].[visitsInfo]
         DROP TABLE IF EXISTS[dbo].[locationInfo]
-        DROP TABLE IF EXISTS[dbo].[censusBlockGroups]
         DROP TABLE IF EXISTS[dbo].[brandsInfo]
+        DROP TABLE IF EXISTS[dbo].[censusBlockGroups]
         DROP TABLE IF EXISTS[dbo].[naicsCodes]
 
-        GO
-
+        /****** Object:  Table [dbo].[brandsInfo]    Script Date: 3/24/2023 1:25:34 PM ******/
         SET ANSI_NULLS ON
         GO
         SET QUOTED_IDENTIFIER ON
@@ -34,13 +33,13 @@ def initialize_database_tables():
         [bid] [int] IDENTITY(1,1) NOT NULL,
         [nid] [int] NULL,
         [brand_name] [varchar](max) NOT NULL,
-        PRIMARY KEY CLUSTERED 
+        CONSTRAINT [PK_brandsInfo.bid] PRIMARY KEY CLUSTERED 
         (
         [bid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
         GO
-
+        /****** Object:  Table [dbo].[categories]    Script Date: 3/24/2023 1:25:34 PM ******/
         SET ANSI_NULLS ON
         GO
         SET QUOTED_IDENTIFIER ON
@@ -48,13 +47,13 @@ def initialize_database_tables():
         CREATE TABLE [dbo].[categories](
         [cid] [int] IDENTITY(1,1) NOT NULL,
         [category] [varchar](max) NOT NULL,
-        PRIMARY KEY CLUSTERED 
+        CONSTRAINT [PK_categories.cid] PRIMARY KEY CLUSTERED 
         (
         [cid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
         GO
-
+        /****** Object:  Table [dbo].[categoriesXref]    Script Date: 3/24/2023 1:25:34 PM ******/
         SET ANSI_NULLS ON
         GO
         SET QUOTED_IDENTIFIER ON
@@ -63,13 +62,13 @@ def initialize_database_tables():
         [cxid] [int] IDENTITY(1,1) NOT NULL,
         [locid] [int] NOT NULL,
         [cid] [int] NOT NULL,
-        PRIMARY KEY CLUSTERED 
+        CONSTRAINT [PK_categoriesXref.cxid] PRIMARY KEY CLUSTERED 
         (
         [cxid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
-
+        /****** Object:  Table [dbo].[censusBlockGroups]    Script Date: 3/24/2023 1:25:34 PM ******/
         SET ANSI_NULLS ON
         GO
         SET QUOTED_IDENTIFIER ON
@@ -77,27 +76,13 @@ def initialize_database_tables():
         CREATE TABLE [dbo].[censusBlockGroups](
         [cbgid] [int] IDENTITY(1,1) NOT NULL,
         [cbg_number] [bigint] NOT NULL,
-        PRIMARY KEY CLUSTERED 
+        CONSTRAINT [PK_censusBlockGroups.cbgid] PRIMARY KEY CLUSTERED 
         (
         [cbgid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
-
-        SET ANSI_NULLS ON
-        GO
-        SET QUOTED_IDENTIFIER ON
-        GO
-        CREATE TABLE [dbo].[devices](
-        [did] [int] IDENTITY(1,1) NOT NULL,
-        [device_name] [varchar](10) NOT NULL,
-        PRIMARY KEY CLUSTERED 
-        (
-        [did] ASC
-        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-        ) ON [PRIMARY]
-        GO
-
+        /****** Object:  Table [dbo].[deviceLog]    Script Date: 3/24/2023 1:25:34 PM ******/
         SET ANSI_NULLS ON
         GO
         SET QUOTED_IDENTIFIER ON
@@ -107,13 +92,27 @@ def initialize_database_tables():
         [did] [int] NOT NULL,
         [vid] [int] NOT NULL,
         [user_count] [int] NOT NULL,
-        PRIMARY KEY CLUSTERED 
+        CONSTRAINT [PK_deviceLog.dlid] PRIMARY KEY CLUSTERED 
         (
         [dlid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
-
+        /****** Object:  Table [dbo].[devices]    Script Date: 3/24/2023 1:25:34 PM ******/
+        SET ANSI_NULLS ON
+        GO
+        SET QUOTED_IDENTIFIER ON
+        GO
+        CREATE TABLE [dbo].[devices](
+        [did] [int] IDENTITY(1,1) NOT NULL,
+        [device_name] [varchar](10) NOT NULL,
+        CONSTRAINT [PK_devices.did] PRIMARY KEY CLUSTERED 
+        (
+        [did] ASC
+        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+        ) ON [PRIMARY]
+        GO
+        /****** Object:  Table [dbo].[locationInfo]    Script Date: 3/24/2023 1:25:34 PM ******/
         SET ANSI_NULLS ON
         GO
         SET QUOTED_IDENTIFIER ON
@@ -132,13 +131,13 @@ def initialize_database_tables():
         [region] [char](5) NOT NULL,
         [postal_code] [varchar](5) NOT NULL,
         [phone_number] [varchar](15) NULL,
-        PRIMARY KEY CLUSTERED 
+        CONSTRAINT [PK_locationInfo.locid] PRIMARY KEY CLUSTERED 
         (
         [locid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
         GO
-
+        /****** Object:  Table [dbo].[naicsCodes]    Script Date: 3/24/2023 1:25:34 PM ******/
         SET ANSI_NULLS ON
         GO
         SET QUOTED_IDENTIFIER ON
@@ -148,13 +147,13 @@ def initialize_database_tables():
         [naics_code] [varchar](10) NOT NULL,
         [top_category] [varchar](max) NOT NULL,
         [sub_category] [varchar](max) NULL,
-        PRIMARY KEY CLUSTERED 
+        CONSTRAINT [PK_naicsCodes.nid] PRIMARY KEY CLUSTERED 
         (
         [nid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
         GO
-
+        /****** Object:  Table [dbo].[relatedBrands]    Script Date: 3/24/2023 1:25:34 PM ******/
         SET ANSI_NULLS ON
         GO
         SET QUOTED_IDENTIFIER ON
@@ -166,13 +165,13 @@ def initialize_database_tables():
         [locid] [int] NOT NULL,
         [visit_count] [int] NOT NULL,
         [day_week_ind] [char](1) NOT NULL,
-        PRIMARY KEY CLUSTERED 
+        CONSTRAINT [PK_relatedBrands.rbid] PRIMARY KEY CLUSTERED 
         (
         [rbid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
-
+        /****** Object:  Table [dbo].[visitsInfo]    Script Date: 3/24/2023 1:25:34 PM ******/
         SET ANSI_NULLS ON
         GO
         SET QUOTED_IDENTIFIER ON
@@ -190,13 +189,13 @@ def initialize_database_tables():
         [normalized_visits_by_region_naics_visitors] [float] NOT NULL,
         [normalized_visits_by_total_visits] [float] NOT NULL,
         [normalized_visits_by_total_visitors] [float] NOT NULL,
-        PRIMARY KEY CLUSTERED 
+        CONSTRAINT [PK_visitsInfo.vid] PRIMARY KEY CLUSTERED 
         (
         [vid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
         GO
-
+        /****** Object:  Table [dbo].[visitsType]    Script Date: 3/24/2023 1:25:34 PM ******/
         SET ANSI_NULLS ON
         GO
         SET QUOTED_IDENTIFIER ON
@@ -209,11 +208,50 @@ def initialize_database_tables():
         [cbgid_orig] [int] NOT NULL,
         [visit_count] [int] NOT NULL,
         [home_work_ind] [char](1) NOT NULL,
-        PRIMARY KEY CLUSTERED 
+        CONSTRAINT [PK_visitsType.vtid] PRIMARY KEY CLUSTERED 
         (
         [vtid] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         ) ON [PRIMARY]
+        GO
+        /****** Object:  Index [categories_locationInfo_uix]    Script Date: 3/24/2023 1:25:34 PM ******/
+        CREATE UNIQUE NONCLUSTERED INDEX [categories_locationInfo_uix] ON [dbo].[categoriesXref]
+        (
+        [locid] ASC,
+        [cid] ASC
+        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+        GO
+        /****** Object:  Index [visitsInfo_devices_uix]    Script Date: 3/24/2023 1:25:34 PM ******/
+        CREATE UNIQUE NONCLUSTERED INDEX [visitsInfo_devices_uix] ON [dbo].[deviceLog]
+        (
+        [did] ASC,
+        [vid] ASC
+        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+        GO
+        /****** Object:  Index [naicsCodes_brandsInfo_censusBlockGroups_uix]    Script Date: 3/24/2023 1:25:34 PM ******/
+        CREATE UNIQUE NONCLUSTERED INDEX [naicsCodes_brandsInfo_censusBlockGroups_uix] ON [dbo].[locationInfo]
+        (
+        [nid] ASC,
+        [bid] ASC,
+        [cbgid] ASC
+        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+        GO
+        /****** Object:  Index [brandsInfo_locationInfo_visitsInfo_uix]    Script Date: 3/24/2023 1:25:34 PM ******/
+        CREATE UNIQUE NONCLUSTERED INDEX [brandsInfo_locationInfo_visitsInfo_uix] ON [dbo].[relatedBrands]
+        (
+        [bid] ASC,
+        [vid] ASC,
+        [locid] ASC
+        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+        GO
+        /****** Object:  Index [locationInfo_visitsInfo_censusBlockGroups_uix]    Script Date: 3/24/2023 1:25:34 PM ******/
+        CREATE UNIQUE NONCLUSTERED INDEX [locationInfo_visitsInfo_censusBlockGroups_uix] ON [dbo].[visitsType]
+        (
+        [locid] ASC,
+        [vid] ASC,
+        [cbgid_loc] ASC,
+        [cbgid_orig] ASC
+        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         GO
         ALTER TABLE [dbo].[brandsInfo]  WITH CHECK ADD  CONSTRAINT [FK_brandsInfo.nid] FOREIGN KEY([nid])
         REFERENCES [dbo].[naicsCodes] ([nid])
@@ -275,16 +313,6 @@ def initialize_database_tables():
         GO
         ALTER TABLE [dbo].[visitsInfo] CHECK CONSTRAINT [FK_visitsInfo.locid]
         GO
-        ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.locid] FOREIGN KEY([locid])
-        REFERENCES [dbo].[locationInfo] ([locid])
-        GO
-        ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.locid]
-        GO
-        ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.vid] FOREIGN KEY([vid])
-        REFERENCES [dbo].[visitsInfo] ([vid])
-        GO
-        ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.vid]
-        GO
         ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.cbgid_loc] FOREIGN KEY([cbgid_loc])
         REFERENCES [dbo].[censusBlockGroups] ([cbgid])
         GO
@@ -294,6 +322,16 @@ def initialize_database_tables():
         REFERENCES [dbo].[censusBlockGroups] ([cbgid])
         GO
         ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.cbgid_orig]
+        GO
+        ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.locid] FOREIGN KEY([locid])
+        REFERENCES [dbo].[locationInfo] ([locid])
+        GO
+        ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.locid]
+        GO
+        ALTER TABLE [dbo].[visitsType]  WITH CHECK ADD  CONSTRAINT [FK_visitsType.vid] FOREIGN KEY([vid])
+        REFERENCES [dbo].[visitsInfo] ([vid])
+        GO
+        ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.vid]
         GO
         USE [master]
         GO
