@@ -16,8 +16,8 @@ def initialize_database_tables():
         DROP TABLE IF EXISTS[dbo].[relatedBrands]
         DROP TABLE IF EXISTS[dbo].[categoriesXref]
         DROP TABLE IF EXISTS[dbo].[categories]
-        DROP TABLE IF EXISTS[dbo].[devices]
         DROP TABLE IF EXISTS[dbo].[deviceLog]
+        DROP TABLE IF EXISTS[dbo].[devices]
         DROP TABLE IF EXISTS[dbo].[visitsInfo]
         DROP TABLE IF EXISTS[dbo].[locationInfo]
         DROP TABLE IF EXISTS[dbo].[brandsInfo]
@@ -160,9 +160,10 @@ def initialize_database_tables():
         GO
         CREATE TABLE [dbo].[relatedBrands](
         [rbid] [int] IDENTITY(1,1) NOT NULL,
-        [bid] [int] NOT NULL,
         [vid] [int] NOT NULL,
         [locid] [int] NOT NULL,
+        [bid_loc] [int] NOT NULL,
+        [bid_rel] [int] NOT NULL,
         [visit_count] [int] NOT NULL,
         [day_week_ind] [char](1) NOT NULL,
         CONSTRAINT [PK_relatedBrands.rbid] PRIMARY KEY CLUSTERED 
@@ -239,9 +240,10 @@ def initialize_database_tables():
         /****** Object:  Index [brandsInfo_locationInfo_visitsInfo_uix]    Script Date: 3/24/2023 1:25:34 PM ******/
         CREATE UNIQUE NONCLUSTERED INDEX [brandsInfo_locationInfo_visitsInfo_uix] ON [dbo].[relatedBrands]
         (
-        [bid] ASC,
         [vid] ASC,
-        [locid] ASC
+        [locid] ASC,
+        [bid_loc] ASC,
+        [bid_rel] ASC
         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
         GO
         /****** Object:  Index [locationInfo_visitsInfo_censusBlockGroups_uix]    Script Date: 3/24/2023 1:25:34 PM ******/
@@ -293,10 +295,15 @@ def initialize_database_tables():
         GO
         ALTER TABLE [dbo].[locationInfo] CHECK CONSTRAINT [FK_locationInfo.nid]
         GO
-        ALTER TABLE [dbo].[relatedBrands]  WITH CHECK ADD  CONSTRAINT [FK_relatedBrands.bid] FOREIGN KEY([bid])
+        ALTER TABLE [dbo].[relatedBrands]  WITH CHECK ADD  CONSTRAINT [FK_relatedBrands.bid_loc] FOREIGN KEY([bid_loc])
         REFERENCES [dbo].[brandsInfo] ([bid])
         GO
-        ALTER TABLE [dbo].[relatedBrands] CHECK CONSTRAINT [FK_relatedBrands.bid]
+        ALTER TABLE [dbo].[relatedBrands] CHECK CONSTRAINT [FK_relatedBrands.bid_loc]
+        GO
+        ALTER TABLE [dbo].[relatedBrands]  WITH CHECK ADD  CONSTRAINT [FK_relatedBrands.bid_rel] FOREIGN KEY([bid_rel])
+        REFERENCES [dbo].[brandsInfo] ([bid])
+        GO
+        ALTER TABLE [dbo].[relatedBrands] CHECK CONSTRAINT [FK_relatedBrands.bid_rel]
         GO
         ALTER TABLE [dbo].[relatedBrands]  WITH CHECK ADD  CONSTRAINT [FK_relatedBrands.locid] FOREIGN KEY([locid])
         REFERENCES [dbo].[locationInfo] ([locid])
