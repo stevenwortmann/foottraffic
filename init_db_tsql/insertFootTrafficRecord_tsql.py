@@ -362,6 +362,9 @@ def initialize_database_stored_procs():
     sql1=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertRelatedBrands](
         @a_placekey VARCHAR(max),
+        @vid INT,
+        @locid INT,
+        @bid_loc INT,
         @w_daterangestart VARCHAR(max),
         @ak_al_relatedbrand VARCHAR(max),
         @ak_al_relatedbrand_cnt INT,
@@ -369,31 +372,24 @@ def initialize_database_stored_procs():
         )
         AS
         BEGIN
-        DECLARE @vidout INT;
-        DECLARE @bidout INT;
-        DECLARE @locidout INT;
+        DECLARE @bid_rel INT;
 
         BEGIN
 
-        IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@ak_al_relatedbrand)=1
+        IF EXISTS (SELECT 1 FROM brandsInfo WHERE brand_name = @ak_al_relatedbrand)
         BEGIN
-        SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@ak_al_relatedbrand);
+        SET @bid_rel=(SELECT bid FROM brandsInfo WHERE brand_name=@ak_al_relatedbrand);
         END;
         ELSE
         BEGIN
         INSERT INTO brandsInfo(brand_name)
         VALUES (@ak_al_relatedbrand);
-        SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
+        SET @bid_rel=SCOPE_IDENTITY();
         END;
 
+        INSERT INTO relatedBrands(vid, locid, bid_loc, bid_rel, visit_count, day_week_ind)
+        VALUES (@vid, @locid, @bid_loc, @bid_rel, @ak_al_relatedbrand_cnt, @day_week_ind);
 
-        IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
-        BEGIN
-        SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart));
-        SET @locidout = (SELECT TOP 1 locid FROM locationInfo WHERE placekey=@a_placekey);			
-        INSERT INTO relatedBrands(bid, vid, locid, visit_count, day_week_ind)
-        VALUES (@bidout, @vidout, @locidout, @ak_al_relatedbrand_cnt, @day_week_ind);
-        END;
         END;
         END;
         ''')
@@ -636,8 +632,9 @@ def poiRecordInsertion(file):
     '''
 
     sql_insertRelatedBrands='''EXECUTE [insertRelatedBrands] 
-        @a_placekey=?
-        ,@w_daterangestart=?
+        @vid=?
+        ,@locid=?
+        ,@bid_loc=?
         ,@ak_al_relatedbrand=?
         ,@ak_al_relatedbrand_cnt=?
         ,@day_week_ind=?
@@ -695,7 +692,7 @@ def poiRecordInsertion(file):
                 x = (x.replace('{"',"")).replace('\\',"").replace("}","").split('":')
                 if (x[1][0]).isalpha() is True: pass
                 else:
-                    values_insertRelatedBrands_Day = (row.placekey, row.date_range_start, x[0], int(x[1]), 'd')
+                    values_insertRelatedBrands_Day = (vid, locid, bid, x[0], int(x[1]), 'd')
                     cur.execute(sql_insertRelatedBrands, values_insertRelatedBrands_Day)
                     cur.commit()
                     #print(x)
@@ -705,7 +702,7 @@ def poiRecordInsertion(file):
                 x = (x.replace('{"',"")).replace('\\',"").replace("}","").split('":')
                 if (x[1][0]).isalpha() is True: pass
                 else:
-                    values_insertRelatedBrands_Week = (row.placekey, row.date_range_start, x[0], int(x[1]), 'w')
+                    values_insertRelatedBrands_Week = (vid, locid, bid, x[0], int(x[1]), 'w')
                     cur.execute(sql_insertRelatedBrands, values_insertRelatedBrands_Week)
                     cur.commit()
                     #print(x)
