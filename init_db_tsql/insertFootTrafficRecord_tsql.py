@@ -395,29 +395,27 @@ def initialize_database_stored_procs():
         ''')
 
     sql2=('''
-        CREATE OR ALTER PROCEDURE [dbo].[insertCategories](
-        @a_placekey VARCHAR(max),
+        ALTER PROCEDURE [dbo].[insertCategories](
+        @locid INT,
         @r_categorytag VARCHAR(max)
         )
         AS
         BEGIN
-        DECLARE @locidout INT;
         DECLARE @cidout INT;
 
         BEGIN
 
-        IF (SELECT COUNT(1) FROM categories WHERE (category=@r_categorytag))=1 
+        IF EXISTS (SELECT 1 FROM categories WHERE (category=@r_categorytag))
         BEGIN
-        SET @cidout=(SELECT cid FROM categories WHERE category=@r_categorytag)
+        SET @cidout=(SELECT cid FROM categories WHERE category=@r_categorytag);
         END;
         ELSE
         BEGIN
         INSERT INTO categories(category)
         VALUES (@r_categorytag);
-        SET @cidout=(SELECT TOP 1 cid FROM categories ORDER BY cid DESC);
-        SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey);
+        SET @cidout=SCOPE_IDENTITY();
         INSERT INTO categoriesXref(locid, cid)
-        VALUES (@locidout, @cidout);
+        VALUES (@locid, @cidout);
         END;
         END;
         END;
@@ -648,7 +646,7 @@ def poiRecordInsertion(file):
     '''
 
     sql_insertCategories='''EXECUTE [insertCategories] 
-        @a_placekey=?
+        @locid=?
         ,@r_categorytag=?
     '''
 
@@ -717,7 +715,7 @@ def poiRecordInsertion(file):
 
         for x in str(row.category_tags).split(','):
             if x != '0':
-                values_insertCategories = (row.placekey, x)
+                values_insertCategories = (locid, x)
                 cur.execute(sql_insertCategories, values_insertCategories)
                 cur.commit()
                 #print(x)
