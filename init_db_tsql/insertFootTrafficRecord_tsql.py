@@ -550,40 +550,33 @@ def initialize_database_stored_procs():
 
     sql5=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertVisitsType](
-        @a_placekey VARCHAR(max),
-        @w_daterangestart VARCHAR(max),
+        @locid INT,
+        @vid INT,
+        @cbgid_loc INT,
         @ad_af_visitorcbg VARCHAR(max),
         @ad_af_visitorcbg_cnt INT,
-        @home_work_ind CHAR(1)
+        home_work_ind CHAR(1)
         )
         AS
         BEGIN
-        DECLARE @vidout INT;
-        DECLARE @cbgidout INT;
-        DECLARE @locidout INT;
 
         BEGIN
-
-        SET @locidout=(SELECT locid FROM locationInfo WHERE placekey=@a_placekey) 
 
         IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ad_af_visitorcbg)=1
         BEGIN
-        SET @cbgidout=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ad_af_visitorcbg);
+        SET @cbgid_orig=(SELECT cbgid FROM censusBlockGroups WHERE cbg_number=@ad_af_visitorcbg);
         END;
 
         ELSE
         BEGIN
         INSERT INTO censusBlockGroups(cbg_number)
         VALUES (@ad_af_visitorcbg);
-        SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
+        SET @cbgid_orig=SCOPE_IDENTITY();
         END;
 
-        IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
-        BEGIN
-        SET @vidout = (SELECT TOP 1 vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart) ORDER BY vid DESC);	
-        INSERT INTO visitsType(locid, vid, cbgid, visit_count, home_work_ind)
-        VALUES (@locidout, @vidout, @cbgidout, @ad_af_visitorcbg_cnt, @home_work_ind);
-        END;
+        INSERT INTO visitsType(locid, vid, cbgid_loc, cbgid_orig, visit_count, home_work_ind)
+        VALUES (@locid, @vid, @cbgid_loc, @cbgid_orig, @ad_af_visitorcbg_cnt, home_work_ind);
+
         END;
         END;
         ''')
@@ -600,59 +593,59 @@ def poiRecordInsertion(file):
     global cur
 
     sql_insertFootTrafficRecord='''EXECUTE [insertFootTrafficRecord]
-       @a_placekey=?
-      ,@c_locationname=?
-      ,@e_brands=?
-      ,@f_topcategory=?
-      ,@g_subcategory=?
-      ,@h_naicscode=?
-      ,@i_latitude=?
-      ,@j_longitude=?
-      ,@k_streetaddress=?
-      ,@l_city=?
-      ,@m_region=?
-      ,@n_postalcode=?
-      ,@p_phonenumber=?
-      ,@w_daterangestart=?
-      ,@y_rawvisitcounts=?
-      ,@z_rawvisitorcounts=?
-      ,@ac_poicbg=?
-      ,@ah_distancefromhome=?
-      ,@ai_mediumdwell=?
-      ,@an_normvisits_statescaling=?
-      ,@ao_normvisits_regionnaicsvisits=?
-      ,@ap_normvisits_regionnaicsvisitors=?
-      ,@aq_normvisits_totalvisits=?
-      ,@ar_normvisits_totalvisitors=?
+        @a_placekey=?
+        ,@c_locationname=?
+        ,@e_brands=?
+        ,@f_topcategory=?
+        ,@g_subcategory=?
+        ,@h_naicscode=?
+        ,@i_latitude=?
+        ,@j_longitude=?
+        ,@k_streetaddress=?
+        ,@l_city=?
+        ,@m_region=?
+        ,@n_postalcode=?
+        ,@p_phonenumber=?
+        ,@w_daterangestart=?
+        ,@y_rawvisitcounts=?
+        ,@z_rawvisitorcounts=?
+        ,@ac_poicbg=?
+        ,@ah_distancefromhome=?
+        ,@ai_mediumdwell=?
+        ,@an_normvisits_statescaling=?
+        ,@ao_normvisits_regionnaicsvisits=?
+        ,@ap_normvisits_regionnaicsvisitors=?
+        ,@aq_normvisits_totalvisits=?
+        ,@ar_normvisits_totalvisitors=?
     '''
 
     sql_insertVisitsType='''EXECUTE [insertVisitsType] 
-       @a_placekey=?
-	  ,@ac_poicbg=?
-      ,@w_daterangestart=?
-      ,@ad_af_visitorcbg=?
-      ,@ad_af_visitorcbg_cnt=?
-      ,@home_work_ind=?
+        @locid=?
+        ,@vid=?
+        ,@cbgid_loc=?
+        ,@ad_af_visitorcbg=?
+        ,@ad_af_visitorcbg_cnt=?
+        ,home_work_ind=?
     '''
 
     sql_insertRelatedBrands='''EXECUTE [insertRelatedBrands] 
-       @a_placekey=?
-      ,@w_daterangestart=?
-      ,@ak_al_relatedbrand=?
-      ,@ak_al_relatedbrand_cnt=?
-      ,@day_week_ind=?
+        @a_placekey=?
+        ,@w_daterangestart=?
+        ,@ak_al_relatedbrand=?
+        ,@ak_al_relatedbrand_cnt=?
+        ,@day_week_ind=?
     '''
 
     sql_insertDeviceCount='''EXECUTE [insertDeviceCount] 
-       @a_placekey=?
-      ,@w_daterangestart=?
-      ,@am_devicetype=?
-      ,@am_devicetype_cnt=?
+        @a_placekey=?
+        ,@w_daterangestart=?
+        ,@am_devicetype=?
+        ,@am_devicetype_cnt=?
     '''
 
     sql_insertCategories='''EXECUTE [insertCategories] 
-       @a_placekey=?
-      ,@r_categorytag=?
+        @a_placekey=?
+        ,@r_categorytag=?
     '''
 
     for row in file.itertuples():
@@ -675,7 +668,7 @@ def poiRecordInsertion(file):
                 x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
                 if (x[0][0]).isalpha() is True: pass
                 else:
-                    values_insertVisitsType_Home = (row.placekey, row.poi_cbg, row.date_range_start, int(x[0]), int(x[1]), 'h')
+                    values_insertVisitsType_Home = (locid, vid, cbgid, int(x[0]), int(x[1]), 'h')
                     cur.execute(sql_insertVisitsType, values_insertVisitsType_Home)
                     cur.commit()
                     #print(x)
@@ -685,7 +678,7 @@ def poiRecordInsertion(file):
                 x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
                 if (x[0][0]).isalpha() is True: pass
                 else:
-                    values_insertVisitsType_Work = (row.placekey, row.poi_cbg, row.date_range_start, int(x[0]), int(x[1]), 'w')
+                    values_insertVisitsType_Work = (locid, vid, cbgid, int(x[0]), int(x[1]), 'w')
                     cur.execute(sql_insertVisitsType, values_insertVisitsType_Work)
                     cur.commit()
                     #print(x)
