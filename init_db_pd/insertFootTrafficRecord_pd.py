@@ -22,20 +22,23 @@ def add_to_naicsCodes(row, naicsCodes):
 
 # Define a function to add a new record to the brandsInfo dataframe if it doesn't already exist
 def add_to_brandsInfo(brand_name, brandsInfo, nid):
-    existing_row = brandsInfo.loc[(brandsInfo['brand_name'] == brand_name)]
-    if existing_row.empty:
-        bid = get_next_pk(brandsInfo)
-        brandsInfo.loc[bid] = [nid, brand_name]
-        return bid
-    else:
-        if len(existing_row.index) > 0:
-            if pd.isnull(existing_row['nid'].iloc[0]):
-                existing_row.at[existing_row.index[0], 'nid'] = nid
-                return existing_row.index[0]
-            else:
-                return existing_row.index[0]
+    if brand_name is not None and brand_name != '':
+        existing_row = brandsInfo.loc[(brandsInfo['brand_name'] == brand_name)]
+        if existing_row.empty:
+            bid = get_next_pk(brandsInfo)
+            brandsInfo.loc[bid] = [nid, brand_name]
+            return bid
         else:
-            return None
+            if len(existing_row.index) > 0:
+                if pd.isnull(existing_row['nid'].iloc[0]) or existing_row['nid'].iloc[0] == '':
+                    existing_row.at[existing_row.index[0], 'nid'] = nid
+                    return existing_row.index[0]
+                else:
+                    return existing_row.index[0]
+            else:
+                return None
+    else:
+        return None
 
 # Define a function to add a new record to the censusBlockGroups dataframe if it doesn't already exist
 def add_to_censusBlockGroups(poi_cbg, censusBlockGroups):
