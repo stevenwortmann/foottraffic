@@ -665,60 +665,51 @@ def poiRecordInsertion(file):
         print(row.location_name[:20]+', '+row.street_address+', '+row.city+', '+row.region+' '+str(row.postal_code)+'... '+
              row.date_range_start+": "+str(int(row.normalized_visits_by_state_scaling))+' total visitors...')
 
-        for x in row.visitor_home_cbgs.split(','):
-            if x!= "{}":
-                x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-                if (x[0][0]).isalpha() is True: pass
-                else:
-                    values_insertVisitsType_Home = (locid, vid, cbgid, int(x[0]), int(x[1]), 'h')
-                    cur.execute(sql_insertVisitsType, values_insertVisitsType_Home)
-                    cur.commit()
-                    #print(x)
-
-        for x in row.visitor_daytime_cbgs.split(','):
-            if x!= "{}":
-                x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-                if (x[0][0]).isalpha() is True: pass
-                else:
-                    values_insertVisitsType_Work = (locid, vid, cbgid, int(x[0]), int(x[1]), 'w')
-                    cur.execute(sql_insertVisitsType, values_insertVisitsType_Work)
-                    cur.commit()
-                    #print(x)
-
-        for x in row.related_same_day_brand.split(',"'):
-            if x!= "{}":
-                x = (x.replace('{"',"")).replace('\\',"").replace("}","").split('":')
-                if (x[1][0]).isalpha() is True: pass
-                else:
-                    values_insertRelatedBrands_Day = (vid, locid, bid, x[0], int(x[1]), 'd')
-                    cur.execute(sql_insertRelatedBrands, values_insertRelatedBrands_Day)
-                    cur.commit()
-                    #print(x)
-
-        for x in row.related_same_week_brand.split(',"'):
-            if x!= "{}":
-                x = (x.replace('{"',"")).replace('\\',"").replace("}","").split('":')
-                if (x[1][0]).isalpha() is True: pass
-                else:
-                    values_insertRelatedBrands_Week = (vid, locid, bid, x[0], int(x[1]), 'w')
-                    cur.execute(sql_insertRelatedBrands, values_insertRelatedBrands_Week)
-                    cur.commit()
-                    #print(x)
-
-        for x in row.device_type.split(','):
-            if x!= "{}":
-                x = (x.replace("{","")).replace('''"''',"").replace("}","").split(':')
-                values_insertDeviceCount = (row.placekey, row.date_range_start, x[0], int(x[1]))
-                cur.execute(sql_insertDeviceCount, values_insertDeviceCount)
+        for key, value in json.loads(row.visitor_home_cbgs).items():
+            if (key[0]).isalpha() is True: pass
+            else:
+                values_insertVisitsType_Home = (locid, vid, cbgid, key, int(value), 'h')
+                cur.execute(sql_insertVisitsType, values_insertVisitsType_Home)
                 cur.commit()
                 #print(x)
 
-        for x in str(row.category_tags).split(','):
-            if x != '0':
-                values_insertCategories = (locid, x)
-                cur.execute(sql_insertCategories, values_insertCategories)
+        for key, value in json.loads(row.visitor_daytime_cbgs).items():
+            if (key[0]).isalpha() is True: pass
+            else:
+                values_insertVisitsType_Work = (locid, vid, cbgid, key, int(value), 'w')
+                cur.execute(sql_insertVisitsType, values_insertVisitsType_Work)
                 cur.commit()
                 #print(x)
+
+        for key, value in json.loads(row.related_same_day_brand).items():
+            if (key[0]).isalpha() is True: pass
+            else:
+                values_insertRelatedBrands_Day = (vid, locid, bid, key, int(value), 'd')
+                cur.execute(sql_insertRelatedBrands, values_insertRelatedBrands_Day)
+                cur.commit()
+                #print(x)
+
+        for key, value in json.loads(row.related_same_week_brand).items():
+            if (key[0]).isalpha() is True: pass
+            else:
+                values_insertRelatedBrands_Week = (vid, locid, bid, key, int(value), 'w')
+                cur.execute(sql_insertRelatedBrands, values_insertRelatedBrands_Week)
+                cur.commit()
+                #print(x)
+
+        for key, value in json.loads(row.device_type).items:
+            values_insertDeviceCount = (row.placekey, row.date_range_start, key, int(value))
+            cur.execute(sql_insertDeviceCount, values_insertDeviceCount)
+            cur.commit()
+            #print(x)
+
+        if not pd.isna(row['category_tags']):
+            for x in str(row.category_tags).split(','):
+                if x != '0':
+                    values_insertCategories = (locid, x)
+                    cur.execute(sql_insertCategories, values_insertCategories)
+                    cur.commit()
+                    #print(x)
 
 def main():
     driver = '{SQL Server}'
