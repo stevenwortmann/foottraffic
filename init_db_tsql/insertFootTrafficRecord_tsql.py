@@ -361,11 +361,9 @@ def initialize_database_stored_procs():
 
     sql1=('''
         CREATE OR ALTER PROCEDURE [dbo].[insertRelatedBrands](
-        @a_placekey VARCHAR(max),
         @vid INT,
         @locid INT,
         @bid_loc INT,
-        @w_daterangestart VARCHAR(max),
         @ak_al_relatedbrand VARCHAR(max),
         @ak_al_relatedbrand_cnt INT,
         @day_week_ind CHAR(1)
@@ -711,6 +709,10 @@ def main():
     db = 'Foot_Traffic' # blank database already created
     user = ''
     password = ''
+
+    raw_csv = pd.read_csv(r"S:\path\to\raw_csv.csv")
+    raw_csv['date_range_start']=raw_csv['date_range_start'].str[:10]
+    raw_csv=raw_csv[~raw_csv.date_range_start.isna()].fillna(0)
 
     while True:
         time.sleep(.001)
