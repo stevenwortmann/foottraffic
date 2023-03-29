@@ -231,7 +231,8 @@ CREATE UNIQUE NONCLUSTERED INDEX [brandsInfo_locationInfo_visitsInfo_uix] ON [db
 	[vid] ASC,
 	[locid] ASC,
 	[bid_loc] ASC,
-	[bid_rel] ASC
+	[bid_rel] ASC,
+	[day_week_ind] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 /****** Object:  Index [locationInfo_visitsInfo_censusBlockGroups_uix]    Script Date: 3/24/2023 1:25:34 PM ******/
@@ -240,7 +241,8 @@ CREATE UNIQUE NONCLUSTERED INDEX [locationInfo_visitsInfo_censusBlockGroups_uix]
 	[locid] ASC,
 	[vid] ASC,
 	[cbgid_loc] ASC,
-	[cbgid_orig] ASC
+	[cbgid_orig] ASC,
+	[home_work_ind] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[brandsInfo]  WITH CHECK ADD  CONSTRAINT [FK_brandsInfo.nid] FOREIGN KEY([nid])
@@ -329,8 +331,6 @@ GO
 ALTER TABLE [dbo].[visitsType] CHECK CONSTRAINT [FK_visitsType.vid]
 GO
 USE [master]
-GO
-ALTER DATABASE [Foot_Traffic] SET  READ_WRITE 
 GO
 USE [Foot_Traffic]
 GO
