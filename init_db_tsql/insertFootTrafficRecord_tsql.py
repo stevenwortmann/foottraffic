@@ -422,26 +422,20 @@ def initialize_database_stored_procs():
         ''')
 
     sql3=('''
-        CREATE OR ALTER PROCEDURE [dbo].[insertDeviceCount]( -- 'device_name' field fully populated with init_db_tables
-        @a_placekey VARCHAR(max),
-        @w_daterangestart VARCHAR(max),
+        ALTER PROCEDURE [dbo].[insertDeviceCount]( -- 'device_name' field fully populated with init_db_tables
+        @vid INT,
         @am_devicetype VARCHAR(max),
         @am_devicetype_cnt INT
         )
         AS
         BEGIN
-        DECLARE @didout INT;
-        DECLARE @vidout INT;
+        DECLARE @did INT;
 
         BEGIN
 
-        IF (SELECT COUNT(1) FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart))=1 
-        BEGIN
-        SET @vidout = (SELECT vid FROM visitsInfo v JOIN locationInfo l ON v.locid=l.locid WHERE (l.placekey=@a_placekey AND v.week_begin=@w_daterangestart));	
-        SET @didout = (SELECT did FROM devices WHERE (device_name=@am_devicetype));
+        SET @did = (SELECT did FROM devices WHERE (device_name=@am_devicetype));
         INSERT INTO deviceLog(did, vid, user_count)
-        VALUES (@didout, @vidout, @am_devicetype_cnt);
-        END;
+        VALUES (@did, @vid, @am_devicetype_cnt);
         END;
         END;
         ''')
@@ -640,8 +634,7 @@ def poiRecordInsertion(file):
     '''
 
     sql_insertDeviceCount='''EXECUTE [insertDeviceCount] 
-        @a_placekey=?
-        ,@w_daterangestart=?
+        @vid=?
         ,@am_devicetype=?
         ,@am_devicetype_cnt=?
     '''
@@ -698,7 +691,7 @@ def poiRecordInsertion(file):
                 cur.commit()
                 #print(x)
 
-        for key, value in json.loads(row.device_type).items:
+        for key, value in json.loads(row.device_type).items():
             values_insertDeviceCount = (row.placekey, row.date_range_start, key, int(value))
             cur.execute(sql_insertDeviceCount, values_insertDeviceCount)
             cur.commit()
