@@ -475,6 +475,9 @@ def initialize_database_stored_procs():
         )
         AS
         BEGIN
+
+        SET NOCOUNT ON
+
         DECLARE @nidout INT;
         DECLARE @bidout INT;
         DECLARE @cbgidout INT;
@@ -491,22 +494,22 @@ def initialize_database_stored_procs():
         BEGIN
         INSERT INTO naicsCodes(naics_code, top_category, sub_category)
         VALUES (@h_naicscode, @f_topcategory, @g_subcategory);
-        SET @nidout=(SELECT TOP 1 nid FROM naicsCodes ORDER BY nid DESC);
+        SET @nidout=SCOPE_IDENTITY();
         END;
 
         IF (SELECT COUNT(1) FROM brandsInfo WHERE brand_name=@e_brands)=1
         BEGIN
         IF (SELECT nid FROM brandsInfo WHERE brand_name=@e_brands) IS NULL
-        BEGIN
-        UPDATE brandsInfo SET nid=@nidout WHERE brand_name=@e_brands;
-        END;
+            BEGIN
+                UPDATE brandsInfo SET nid=@nidout WHERE brand_name=@e_brands;
+            END;
         SET @bidout=(SELECT bid FROM brandsInfo WHERE brand_name=@e_brands);
         END;
         ELSE
         BEGIN
         INSERT INTO brandsInfo(nid, brand_name)
-        VALUES (@nidout, @e_brands);
-        SET @bidout=(SELECT TOP 1 bid FROM brandsInfo ORDER BY bid DESC);
+            VALUES (@nidout, @e_brands);
+        SET @bidout=SCOPE_IDENTITY();
         END;
 
         IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ac_poicbg)=1
@@ -518,7 +521,7 @@ def initialize_database_stored_procs():
         BEGIN
         INSERT INTO censusBlockGroups(cbg_number)
         VALUES (@ac_poicbg);
-        SET @cbgidout=(SELECT TOP 1 cbgid FROM censusBlockGroups ORDER BY cbgid DESC);
+        SET @cbgidout=SCOPE_IDENTITY();
         END;
 
         IF (SELECT COUNT(1) FROM locationInfo WHERE placekey=@a_placekey)=1
@@ -529,7 +532,7 @@ def initialize_database_stored_procs():
         BEGIN
         INSERT INTO locationInfo(nid, bid, cbgid, placekey, location_name, latitude, longitude, street_address, city, region, postal_code, phone_number)
         VALUES (@nidout, @bidout, @cbgidout, @a_placekey, @c_locationname, @i_latitude, @j_longitude, @k_streetaddress, @l_city, @m_region, @n_postalcode, @p_phonenumber);
-        SET @locidout=(SELECT TOP 1 locid FROM locationInfo ORDER BY locid DESC);
+        SET @locidout=SCOPE_IDENTITY();
         END;
 
         IF (SELECT COUNT(1) FROM visitsInfo WHERE (locid=@locidout AND week_begin=@w_daterangestart))=1 
@@ -542,11 +545,11 @@ def initialize_database_stored_procs():
         normalized_visits_by_region_naics_visits, normalized_visits_by_region_naics_visitors, normalized_visits_by_total_visits, normalized_visits_by_total_visitors)
         VALUES (@locidout, @w_daterangestart, @y_rawvisitcounts, @z_rawvisitorcounts, @ah_distancefromhome, @ai_mediumdwell, @an_normvisits_statescaling,
         @ao_normvisits_regionnaicsvisits, @ap_normvisits_regionnaicsvisitors, @aq_normvisits_totalvisits, @ar_normvisits_totalvisitors);
-        SET @vidout=(SELECT TOP 1 vid FROM visitsInfo ORDER BY vid DESC);
-        END;
-	    SELECT @nidout AS nidout, @bidout AS bidout, @locidout AS locidout, @cbgidout AS cbgidout, @vidout AS vidout;
+        SET @vidout=SCOPE_IDENTITY();
         END;
         END;
+        END;
+        SELECT @nidout AS 'nidout', @bidout AS 'bidout', @locidout AS 'locidout', @cbgidout AS 'cbgidout', @vidout AS 'vidout';
         ''')
 
     sql5=('''
@@ -556,11 +559,12 @@ def initialize_database_stored_procs():
         @cbgid_loc INT,
         @ad_af_visitorcbg VARCHAR(max),
         @ad_af_visitorcbg_cnt INT,
-        home_work_ind CHAR(1)
+        @home_work_ind CHAR(1)
         )
         AS
         BEGIN
-
+        DECLARE @cbgid_orig INT;
+        
         BEGIN
 
         IF (SELECT COUNT(1) FROM censusBlockGroups WHERE cbg_number=@ad_af_visitorcbg)=1
@@ -576,7 +580,7 @@ def initialize_database_stored_procs():
         END;
 
         INSERT INTO visitsType(locid, vid, cbgid_loc, cbgid_orig, visit_count, home_work_ind)
-        VALUES (@locid, @vid, @cbgid_loc, @cbgid_orig, @ad_af_visitorcbg_cnt, home_work_ind);
+        VALUES (@locid, @vid, @cbgid_loc, @cbgid_orig, @ad_af_visitorcbg_cnt, @home_work_ind);
 
         END;
         END;
@@ -585,9 +589,6 @@ def initialize_database_stored_procs():
     for query in [sql1,sql2,sql3,sql4,sql5]:
         cur.execute(query)
         conn.commit()
-
-    cur.close()
-    conn.close
 
 def poiRecordInsertion(file):
     global conn
@@ -626,7 +627,7 @@ def poiRecordInsertion(file):
         ,@cbgid_loc=?
         ,@ad_af_visitorcbg=?
         ,@ad_af_visitorcbg_cnt=?
-        ,home_work_ind=?
+        ,@home_work_ind=?
     '''
 
     sql_insertRelatedBrands='''EXECUTE [insertRelatedBrands] 
